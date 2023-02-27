@@ -81,10 +81,11 @@ Widget historicoDeAcciones({
             height: (widgetHeight).clamp(minHeight, maxHeight),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: const [
+              children: [
                 Button1(
                   buttonLabel: "Guardar",
-                  buttonIcon: Icon(Icons.save),
+                  buttonIcon: const Icon(Icons.save),
+                  onPressed: () => {},
                 ),
               ],
             ),

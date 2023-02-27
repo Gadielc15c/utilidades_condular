@@ -40,8 +40,8 @@ class DropDown1 extends State<FormDropDown1> {
           DropdownButtonFormField(
             decoration: InputDecoration(
               floatingLabelBehavior: FloatingLabelBehavior.auto,
-              focusedBorder: textOutlineBorder,
-              enabledBorder: textOutlineBorder,
+              focusedBorder: textOutlineBorder(),
+              enabledBorder: textOutlineBorder(),
             ),
             value: dropdownvalue,
             icon: const Icon(Icons.arrow_drop_down_sharp),

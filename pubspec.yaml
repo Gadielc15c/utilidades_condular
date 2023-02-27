@@ -40,6 +40,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
   syncfusion_flutter_datagrid: ^20.4.44
+  syncfusion_flutter_core: ^20.4.44
+  syncfusion_localizations: ^20.4.44
 
 dev_dependencies:
   flutter_test:

@@ -49,15 +49,15 @@ class DatePicker1 extends State<FormDatePicker1> {
                   Icons.calendar_month,
                 ),
               ),
-              focusedBorder: textOutlineBorder,
-              enabledBorder: textOutlineBorder,
+              focusedBorder: textOutlineBorder(),
+              enabledBorder: textOutlineBorder(),
             ),
             readOnly: true,
             onTap: () async {
               DateTime? pickedDate = await showDatePicker(
                 context: context,
                 initialEntryMode: DatePickerEntryMode.input,
-                locale: const Locale("es", "MX"),
+                // locale: const Locale("es", "MX"),
                 initialDate: DateTime.now(),
                 firstDate: DateTime(DateTime.now().year - 100),
                 lastDate: DateTime(DateTime.now().year + 100),

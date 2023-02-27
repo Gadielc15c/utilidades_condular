@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 import 'consulta_historico_de_acciones.dart';
 import 'historico_de_acciones.dart';
 import 'historico_de_archivos.dart';
@@ -18,7 +19,6 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       theme: ThemeData(
         primarySwatch: Colors.red,
-        backgroundColor: Colors.red,
         dialogTheme: const DialogTheme(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
@@ -27,10 +27,16 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
-      supportedLocales: const [
-        Locale("en", "US"),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        SfGlobalLocalizations.delegate,
       ],
+      supportedLocales: const [
+        Locale("es", "MX"),
+      ],
+      locale: const Locale("es", "MX"),
     );
   }
 }
@@ -87,14 +93,14 @@ class _HomePage extends State<HomePage> {
                     contextHeight: myHeight,
                     contextWidth: myWidth,
                   )
-                : selectedIndex == 0
+                : selectedIndex == 1
                     ? historicoDeArchivos(
                         context: context,
                         stateChange: changeState,
                         contextHeight: myHeight,
                         contextWidth: myWidth,
                       )
-                    : selectedIndex == 1
+                    : selectedIndex == 0
                         ? LayoutBuilder(
                             builder: (context, constraint) {
                               return consultaHistoricoDeAccionesTab(

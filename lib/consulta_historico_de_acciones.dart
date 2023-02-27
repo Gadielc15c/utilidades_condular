@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 // No borrar
+// ignore:unused_import
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 // No borrar
+// ignore: depend_on_referenced_packages, unused_import
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'common/myWidgets/sized_boxes.dart';
 import 'common/myWidgets/labels.dart';
 import 'common/decoration/dec_outline_input_border.dart';
-// import 'common/myWidgets/form/form_text_field_1.dart';
-// import 'common/myWidgets/form/form_dropdown_button_1.dart';
-// import 'common/myWidgets/form/form_datepicker.dart';
-// import 'common/myWidgets/buttons.dart';
 import 'common/myWidgets/build_data_grid.dart';
 
 Widget consultaHistoricoDeAccionesTab({
@@ -22,15 +20,15 @@ Widget consultaHistoricoDeAccionesTab({
   String keyColumnWidth = "columnWidth";
 
   List<Map> columnsName = [
-    {keyName: "ID", keyColumnWidth: 60},
-    {keyName: "PROYECTO", keyColumnWidth: 150},
-    {keyName: "ACCION", keyColumnWidth: 120},
-    {keyName: "FECHA", keyColumnWidth: 115},
+    {keyName: "ID", keyColumnWidth: 110},
+    {keyName: "PROYECTO", keyColumnWidth: 180},
+    {keyName: "ACCION", keyColumnWidth: 160},
+    {keyName: "FECHA", keyColumnWidth: 155},
     {keyName: "DESCRIPCION", keyColumnWidth: double.nan},
-    {keyName: "OBSERVACION", keyColumnWidth: 200}
+    {keyName: "OBSERVACION", keyColumnWidth: double.nan},
   ];
 
-  List<List> rowData = [];
+  List<List<String>> rowData = [];
   for (var i = 0; i < 50; i++) {
     rowData.add([
       "ID$i",
@@ -38,7 +36,7 @@ Widget consultaHistoricoDeAccionesTab({
       "Accion$i",
       "Fecha$i",
       "Descripcion$i",
-      "Observacion$i"
+      "Observacion$i",
     ]);
   }
 
@@ -60,11 +58,19 @@ Widget consultaHistoricoDeAccionesTab({
             widgetHeight: widgetHeight,
             customHeight: mySfDataGridHeight,
           ),
-          child: buildSfDataGrid(
-            columnsName: columnsName,
-            keyName: keyName,
-            keyColumnWidth: keyColumnWidth,
-            rowData: rowData,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              BuildSfDataGrid(
+                context: context,
+                columnNames: columnsName,
+                keyName: keyName,
+                keyColumnWidth: keyColumnWidth,
+                rowsData: rowData,
+                widgetHeight: widgetHeight - 300,
+                widgetWidth: widgetWidth,
+              ),
+            ],
           ),
         ),
       ],

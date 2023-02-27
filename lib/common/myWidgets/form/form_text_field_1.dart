@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:utilidades_condular/common/decoration/dec_outline_input_border.dart';
 import 'form_label_1.dart';
 
-Widget formTextField1(
-    {required BuildContext context,
-    required String textFormFieldOuterLabel,
-    required bool textFormFieldObligatory,
-    int textFormMaxLines = 1}) {
+Widget formTextField1({
+  required BuildContext context,
+  required String textFormFieldOuterLabel,
+  required bool textFormFieldObligatory,
+  int textFormMaxLines = 1,
+}) {
   //
 
   return Expanded(
@@ -22,8 +23,8 @@ Widget formTextField1(
           ),
           decoration: InputDecoration(
             floatingLabelBehavior: FloatingLabelBehavior.auto,
-            focusedBorder: textOutlineBorder,
-            enabledBorder: textOutlineBorder,
+            focusedBorder: textOutlineBorder(),
+            enabledBorder: textOutlineBorder(),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
