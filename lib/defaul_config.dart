@@ -18,3 +18,11 @@ String writeDate = "Ingresar fecha:";
 //
 String cancelOption = "CANCELAR";
 String confirmOption = "CONFIRMAR";
+const String mandatoryText = 'Campo Obligatorio';
+
+// NO TOCAR
+const String err = 'error';
+const String cnt = 'content';
+const String scc = 'success';
+const String queryInsert = "insert0";
+const String queryUpdate = "update0";

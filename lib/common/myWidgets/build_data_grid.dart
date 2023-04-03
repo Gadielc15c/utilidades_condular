@@ -1,12 +1,16 @@
-// ignore_for_file: depend_on_referenced_packages, unused_import
+// ignore_for_file: depend_on_referenced_packages, unused_import, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:utilidades_condular/backend/api_bridge.dart';
 import 'package:utilidades_condular/common/myWidgets/sized_boxes.dart';
 import 'package:utilidades_condular/common/myWidgets/buttons.dart';
+import 'package:utilidades_condular/common/myWidgets/snack_bar.dart';
 import 'package:utilidades_condular/common/myWidgets/text_field.dart';
-import 'package:utilidades_condular/common/myWidgets/notifications.dart';
+import 'package:utilidades_condular/common/myWidgets/my_show_dialog.dart';
 import 'package:utilidades_condular/common/myFunctions/list_related.dart';
+import 'package:utilidades_condular/defaul_config.dart';
+import 'package:utilidades_condular/pages/historico_de_acciones.dart';
 
 List<List> _paginatedOrders = [];
 List<List> _orders = [];
@@ -164,6 +168,28 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
 
   List<DataGridRow> selectedRows = [];
 
+  Future<void> updateSelectedRows() async {
+    List<DataGridRow>? selectedRows = _dataGridController.selectedRows;
+    if (selectedRows.isNotEmpty && selectedRows.length == 1) {
+      Map<String, dynamic> rowMap = {};
+      for (var row in selectedRows) {
+        for (var cell in row.getCells()) {
+          rowMap[cell.columnName] = cell.value;
+        }
+      }
+
+      showUpdateHistoricoDeAccionesDialog(
+        context: context,
+        idCode: rowMap["ID"],
+        proyectoText: rowMap['PROYECTO'],
+        accionText: rowMap['ACCION'],
+        fechaText: rowMap['FECHA'],
+        observacionText: rowMap['DESCRIPCION'],
+        descripcionText: rowMap['OBSERVACION'],
+      );
+    }
+  }
+
   Future<void> deleteSelectedRows() async {
     int someLength = _dataGridController.selectedRows.length;
     if (someLength > 0) {
@@ -179,30 +205,56 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
         return;
       }
     }
-
-    setState(() {
-      List<String> searchedList = [];
-      if (_originalOrders.length != searchedList.length) {
-        searchedList = _orders.map((e) => e.join()).toList();
+    List<DataGridRow>? selectedRowsTemp = _dataGridController.selectedRows;
+    if (selectedRowsTemp.isNotEmpty && selectedRowsTemp.length == 1) {
+      Map<String, dynamic> rowMap = {};
+      for (var row in selectedRowsTemp) {
+        for (var cell in row.getCells()) {
+          rowMap[cell.columnName] = cell.value;
+        }
+      }
+      var results = await deleteData(table: "ACTIVIDADES", id: rowMap["ID"]);
+      mySnackBar(
+        context: context,
+        success: results[scc],
+        successfulText: "Se eliminó exitosamente",
+        unsuccessfulText: results[err],
+      );
+      if (!results[scc]) {
+        return;
       }
 
-      selectedRows = _dataGridController.selectedRows;
-      List<String> selectedRowsTemp = [];
+      setState(() {
+        List<String> searchedList = [];
+        if (_originalOrders.length != searchedList.length) {
+          searchedList = _orders.map((e) => e.join()).toList();
+        }
 
-      for (var s in selectedRows) {
-        selectedRowsTemp
-            .add(s.getCells().map((e) => e.value.toString()).toList().join());
-      }
+        selectedRows = _dataGridController.selectedRows;
+        List<String> selectedRowsTemp = [];
 
-      findListInListOfListAndRemoveIt(_originalOrders, selectedRowsTemp);
-      if (searchedList.isNotEmpty) {
-        findListInListOfListAndRemoveIt(_orders, selectedRowsTemp);
-      }
+        for (var s in selectedRows) {
+          selectedRowsTemp
+              .add(s.getCells().map((e) => e.value.toString()).toList().join());
+        }
 
-      selectedRows = [];
+        findListInListOfListAndRemoveIt(_originalOrders, selectedRowsTemp);
+        if (searchedList.isNotEmpty) {
+          findListInListOfListAndRemoveIt(_orders, selectedRowsTemp);
+        }
 
-      _updateAndPaginateOrders();
-    });
+        selectedRows = [];
+
+        _updateAndPaginateOrders();
+      });
+    } else {
+      mySnackBar(
+        context: context,
+        success: false,
+        successfulText: "",
+        unsuccessfulText: "No se seleccionó una fila para eliminar.",
+      );
+    }
   }
 
   @override
@@ -270,7 +322,7 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
                     Button1(
                       buttonLabel: "Editar",
                       disableButtonIcon: true,
-                      onPressed: () => {},
+                      onPressed: () => updateSelectedRows(),
                     ),
                     sizedBoxW(width: 10),
                     Button1(
@@ -285,6 +337,9 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
                       .clamp(0, (widget.widgetHeight).abs() + 1),
                   child: SfDataGrid(
                     controller: _dataGridController,
+                    onSelectionChanged: (addedRows, removedRows) => {
+                      _dataGridController.selectedRows = addedRows,
+                    },
                     allowPullToRefresh: true,
                     onQueryRowHeight: (details) {
                       return details.getIntrinsicRowHeight(details.rowIndex);
@@ -298,7 +353,7 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
                     gridLinesVisibility: GridLinesVisibility.none,
                     allowSorting: true,
                     allowMultiColumnSorting: true,
-                    selectionMode: SelectionMode.multiple,
+                    selectionMode: SelectionMode.single,
                     columns: dataColumnsName,
                     source: rDataSource,
                     footerFrozenRowsCount: 1,

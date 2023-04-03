@@ -16,16 +16,17 @@ SizedBox sizedBoxH({double height = 10.0}) {
   );
 }
 
-SizedBox sizedBoxPadding(
-    {required var child,
-    double contextHeight = -999,
-    double top = 50,
-    double left = 50,
-    double right = 50,
-    double bottom = 0}) {
+SizedBox sizedBoxPadding({
+  required var child,
+  double? contextHeight,
+  double top = 50,
+  double left = 50,
+  double right = 50,
+  double bottom = 50,
+}) {
   //
   double topValue;
-  if (contextHeight == -999) {
+  if (contextHeight == null) {
     topValue = top;
   } else {
     topValue = (contextHeight - defaultTopPaddingSubtract)

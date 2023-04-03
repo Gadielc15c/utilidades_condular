@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:utilidades_condular/common/decoration/dec_outline_input_border.dart';
+import 'package:utilidades_condular/common/myWidgets/my_text.dart';
+import 'package:utilidades_condular/defaul_config.dart';
 import 'labels.dart';
-
-// required BuildContext context,
-//   required String textFormFieldOuterLabel,
-//   required bool textFormFieldObligatory,
-//   String hintText = "",
-//   int textFormMaxLines = 1,
-//   Color uniformColor = const Color.fromARGB(255, 242, 242, 242),
-//   TextEditingController test = TextEditingController(),
 
 class SearchTextField extends StatefulWidget {
   final String textFormFieldOuterLabel;
@@ -95,41 +89,63 @@ class ASearchTextField extends State<SearchTextField> {
   }
 }
 
-// Widget searchTextField({
-//   required BuildContext context,
-//   required String textFormFieldOuterLabel,
-//   required bool textFormFieldObligatory,
-//   String hintText = "",
-//   int textFormMaxLines = 1,
-//   Color uniformColor = const Color.fromARGB(255, 242, 242, 242),
-//   TextEditingController test = TextEditingController(),
-//   // maybe put the fill color
-// }) {
-//   //
+class TextField1 extends StatefulWidget {
+  final String textFormFieldOuterLabel;
+  final bool textFormFieldObligatory;
+  final TextEditingController controller;
+  final int textFormMaxLines;
+  bool displayMandatoryField;
+  TextField1({
+    Key? key,
+    required this.textFormFieldOuterLabel,
+    required this.textFormFieldObligatory,
+    required this.controller,
+    this.textFormMaxLines = 1,
+    required this.displayMandatoryField,
+  }) : super(key: key);
 
-//   return TextField(
-//     maxLines: textFormMaxLines,
-//     style: const TextStyle(
-//       height: 1.5,
-//     ),
-//     decoration: InputDecoration(
-//       floatingLabelBehavior: FloatingLabelBehavior.auto,
-//       focusedBorder: textOutlineBorder(
-//         borderColor: uniformColor,
-//       ),
-//       enabledBorder: textOutlineBorder(
-//         borderColor: uniformColor,
-//       ),
-//       hintText: hintText,
-//       filled: true,
-//       fillColor: uniformColor,
-//       suffixIcon: const Padding(
-//         padding: EdgeInsets.only(bottom: 2),
-//         child: Icon(
-//           color: Colors.black,
-//           Icons.search,
-//         ),
-//       ),
-//     ),
-//   );
-// }
+  @override
+  TextField1Body createState() => TextField1Body();
+}
+
+class TextField1Body extends State<TextField1> {
+  String displayMsg = "";
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          labelWMandatory(
+            textFormFieldOuterLabel: widget.textFormFieldOuterLabel,
+            textFormFieldObligatory: widget.textFormFieldObligatory,
+          ),
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                if (value.isEmpty) {
+                  widget.displayMandatoryField = true;
+                } else {
+                  widget.displayMandatoryField = false;
+                }
+              });
+            },
+            controller: widget.controller,
+            maxLines: widget.textFormMaxLines,
+            style: const TextStyle(
+              height: 1.5,
+            ),
+            decoration: InputDecoration(
+              floatingLabelBehavior: FloatingLabelBehavior.auto,
+              focusedBorder: textOutlineBorder(),
+              enabledBorder: textOutlineBorder(),
+            ),
+          ),
+          mandatoryTextWidget(
+            displayMandatoryField: widget.displayMandatoryField,
+          ),
+        ],
+      ),
+    );
+  }
+}

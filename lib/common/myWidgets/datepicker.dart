@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'form_label_1.dart';
+import 'package:utilidades_condular/common/myWidgets/labels.dart';
+import 'package:utilidades_condular/common/myWidgets/my_text.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 import 'package:utilidades_condular/common/decoration/dec_outline_input_border.dart';
 
 class FormDatePicker1 extends StatefulWidget {
   final String textFormFieldOuterLabel;
   final bool textFormFieldObligatory;
-  const FormDatePicker1({
+  final TextEditingController controller;
+  bool displayMandatoryField;
+
+  FormDatePicker1({
     Key? key,
+    required this.controller,
     required this.textFormFieldOuterLabel,
     required this.textFormFieldObligatory,
+    required this.displayMandatoryField,
   }) : super(key: key);
 
   @override
@@ -18,11 +24,9 @@ class FormDatePicker1 extends StatefulWidget {
 }
 
 class DatePicker1 extends State<FormDatePicker1> {
-  TextEditingController dateInput = TextEditingController();
-
   @override
   void initState() {
-    dateInput.text = DateFormat(dateFormat).format(DateTime.now());
+    widget.controller.text = DateFormat(dateFormat).format(DateTime.now());
     super.initState();
   }
 
@@ -30,14 +34,15 @@ class DatePicker1 extends State<FormDatePicker1> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          formLabel1(
+          labelWMandatory(
             textFormFieldOuterLabel: widget.textFormFieldOuterLabel,
             textFormFieldObligatory: widget.textFormFieldObligatory,
           ),
-          TextFormField(
+          TextField(
+            controller: widget.controller,
             textAlignVertical: TextAlignVertical.center,
-            controller: dateInput,
             style: const TextStyle(
               height: 1.5,
             ),
@@ -73,10 +78,13 @@ class DatePicker1 extends State<FormDatePicker1> {
                 String formattedDate =
                     DateFormat(dateFormat).format(pickedDate);
                 setState(() {
-                  dateInput.text = formattedDate;
+                  widget.controller.text = formattedDate;
                 });
               } else {}
             },
+          ),
+          mandatoryTextWidget(
+            displayMandatoryField: widget.displayMandatoryField,
           ),
         ],
       ),
