@@ -76,22 +76,11 @@ class _MainPage extends State<MainPage> {
   }
 }
 
-// TODO
-
-// The selects for each page and login
-// if textfield isn't mandatory, remove the onChange condition
-// edit cells on consulta historico de acciones
-
-// DB logs
-// implement login
-
-// Test if the mandatory text is displayed correctly under dates
-// Test everything new from historico de archivo like the mandatory text, the insert
-// Update database in consulta historico whenever it edits
-// only show those with status of 1
-// fix borders in consulta historico
-// make sure the sql calls aren't double calling
-
-//FK_PROYECTO is suppose to be a reference to PROYECTOS NOMBRE, example: La Vega
 
 
+/*
+TODO
+make sure the sql calls aren't double calling
+If not connected to API, cancel options until refresh
+
+*/

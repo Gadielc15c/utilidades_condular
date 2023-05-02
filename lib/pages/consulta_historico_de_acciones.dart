@@ -74,6 +74,7 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
   @override
   void initState() {
     _rowDataFuture = _populateTable();
+
     super.initState();
   }
 
@@ -91,44 +92,82 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
       {keyName: "OBSERVACION", keyColumnWidth: double.nan},
     ];
 
+    Future<bool> areListsEqual(
+      Future<List<List<String>>>? future1,
+      Future<List<List<String>>>? future2,
+    ) async {
+      List<List<String>> list1 = await future1 ?? [];
+      List<List<String>> list2 = await future2 ?? [];
+
+      if (list1.length != list2.length) {
+        return false;
+      }
+
+      for (int i = 0; i < list1.length; i++) {
+        if (!list1[i].every((element) => list2[i].contains(element))) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    Future<void> populateTableAgain() async {
+      Future<List<List<String>>>? tempData;
+      tempData = _populateTable();
+
+      if (mounted) {
+        if (!(await areListsEqual(tempData, _rowDataFuture))) {
+          setState(() {
+            _rowDataFuture = tempData;
+          });
+        }
+      }
+    }
+
     return sizedBoxPadding(
       contextHeight: widget.widgetHeight,
       bottom: 20,
-      child: Column(
+      child: ListView(
         children: [
-          Center(
-            child: largeLabel1(text: "CONSULTA HISTORICO DE ACCIONES"),
-          ),
-          Divider(
-            color: textFieldBorderColor,
-          ),
-          FutureBuilder<List<List<String>>>(
-            future: _rowDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              if (!snapshot.hasData) {
-                return const Text('No data');
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BuildSfDataGrid(
-                    context: context,
-                    columnNames: columnsName,
-                    keyName: keyName,
-                    keyColumnWidth: keyColumnWidth,
-                    rowsData: snapshot.data!,
-                    widgetHeight: widget.widgetHeight - 300,
-                    widgetWidth: widget.widgetHeight,
-                  ),
-                ],
-              );
-            },
+          Column(
+            children: [
+              Center(
+                child: largeLabel1(text: "CONSULTA HISTORICO DE ACCIONES"),
+              ),
+              Divider(
+                color: textFieldBorderColor,
+              ),
+              FutureBuilder<List<List<String>>>(
+                future: _rowDataFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text('No data');
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BuildSfDataGrid(
+                        context: context,
+                        columnNames: columnsName,
+                        keyName: keyName,
+                        keyColumnWidth: keyColumnWidth,
+                        rowsData: snapshot.data!,
+                        widgetHeight: widget.widgetHeight - 300,
+                        widgetWidth: widget.widgetHeight,
+                        getDataAgain: populateTableAgain,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),

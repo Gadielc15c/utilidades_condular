@@ -60,6 +60,7 @@ Future<void> showUpdateHistoricoDeAccionesDialog({
 }) async {
   await showDialog<bool>(
     context: context,
+    barrierDismissible: false,
     builder: (BuildContext context) {
       return GestureDetector(
         child: AlertDialog(
@@ -129,3 +130,17 @@ Future<bool> showEditDialog({
   );
   return result;
 }
+
+// Future<void> loadingDialog({
+//   required BuildContext context,
+// }) async {
+//   await showDialog<void>(
+//     context: context,
+//     barrierDismissible: false,
+//     builder: (BuildContext context) {
+//       return const AlertDialog(
+//         content: CircularProgressIndicator(),
+//       );
+//     },
+//   );
+// }

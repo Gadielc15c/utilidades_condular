@@ -1,6 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:utilidades_condular/backend/api_bridge.dart';
+import 'package:utilidades_condular/common/myFunctions/format_logs.dart';
+import 'package:utilidades_condular/common/myFunctions/get_datetime_utc.dart';
+import 'package:utilidades_condular/common/myFunctions/spacing_calc.dart';
 import 'package:utilidades_condular/common/myWidgets/dropdownbutton.dart';
+import 'package:utilidades_condular/common/myWidgets/my_show_dialog.dart';
 import 'package:utilidades_condular/common/myWidgets/snack_bar.dart';
 import 'package:utilidades_condular/common/myWidgets/text_field.dart';
 import 'package:utilidades_condular/common/myWidgets/datepicker.dart';
@@ -9,6 +15,7 @@ import 'package:utilidades_condular/common/myWidgets/labels.dart';
 import 'package:utilidades_condular/common/decoration/dec_outline_input_border.dart';
 import 'package:utilidades_condular/common/myWidgets/buttons.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:utilidades_condular/common/myWidgets/waiting_screen.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 
 class HistoricoDeAcciones extends StatefulWidget {
@@ -55,24 +62,36 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
   bool boolMFObservacion = false;
   bool boolMFDescripcion = false;
 
+  bool loadingScreen = false;
+
   Map<String, String> myListValues = {};
+  List selectItems = [];
 
   @override
-  void dispose() {
-    super.dispose();
+  void initState() {
+    populateSelectField();
+
+    super.initState();
+  }
+
+  Future<void> populateSelectField() async {
+    List tempData = await _getSearchableItems();
+    if (mounted) {
+      setState(() {
+        selectItems = tempData;
+      });
+    }
   }
 
   Future<List> _getSearchableItems() async {
     var results = await spData(sp: "get_unique_proyectos_name");
     List selectionData = [];
-    // Map<String, String> aListValues = {};
     if (results[scc]) {
       for (var aMap in results[cnt].values) {
         myListValues[aMap['NOMBRE']] = aMap['ID_PROYECTO'];
         selectionData.add(aMap['NOMBRE'].toString());
       }
     } else {
-      // ignore: use_build_context_synchronously
       mySnackBar(
         context: context,
         success: false,
@@ -85,8 +104,6 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
 
   @override
   Widget build(BuildContext context) {
-    double widgetHeight = widget.contextHeight / 5;
-
     if (widget.proyectoText != null &&
         widget.accionText != null &&
         widget.fechaText != null &&
@@ -102,182 +119,258 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
       controllerDescripcion.text = widget.descripcionText ?? '';
     }
 
+    String oProyecto = widget.proyectoText ?? '';
+    String oAccion = widget.accionText ?? '';
+    String oFecha = widget.fechaText ?? '';
+    String oObservacion = widget.observacionText ?? '';
+    String oDescripcion = widget.descripcionText ?? '';
+
+    String oDataEdit = stringForLogs([
+      "ID: ${widget.idCode ?? ''}",
+      "PROYECTO: $oProyecto",
+      "ACCION: $oAccion",
+      "FECHA: $oFecha",
+      "DESCRIPCION: $oDescripcion",
+      "OBSERVACION: $oObservacion",
+    ]);
+
+    double maxSpacing = widget.queryType == queryInsert ? 43.47 : 60;
+    double maxContextHeightSize = widget.queryType == queryInsert ? 807.5 : 969;
+    double minContextHeightSize = widget.queryType == queryInsert ? 600 : 700;
+    double sizedBoxHeight = spacingHeight(
+      contextHeight: widget.contextHeight,
+      minContextHeightSize: minContextHeightSize,
+      maxContextHeightSize: maxContextHeightSize,
+      maxSpacing: maxSpacing,
+    );
+
     return sizedBoxPadding(
       contextHeight: widget.contextHeight,
-      child: FutureBuilder<List>(
-        future: _getSearchableItems(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: SizedBox(
-                height: 100,
-                width: 100,
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          if (!snapshot.hasData) {
-            return const Text('No data');
-          }
-          return Column(
+      child: Stack(
+        children: [
+          ListView(
             children: [
-              Center(
-                child: largeLabel1(text: "HISTORICO DE ACCIONES"),
-              ),
-              const Spacer(),
-              Divider(
-                color: textFieldBorderColor,
-              ),
-              const Spacer(),
-              Row(
+              Column(
                 children: [
-                  SearchableDropDown(
-                    globalKey: keyHDAcc1,
-                    controller: controllerProyecto,
-                    textFormFieldOuterLabel: "Proyecto",
-                    textFormFieldObligatory: true,
-                    items: snapshot.data!,
-                    placeholderText: "Seleccione el proyecto",
-                    initialvalue: controllerProyecto.text.isNotEmpty
-                        ? controllerProyecto.text
-                        : '',
-                    displayMandatoryField: boolMFProyecto,
+                  Center(
+                    child: largeLabel1(text: "HISTORICO DE ACCIONES"),
                   ),
-                  sizedBoxW(),
-                  TextField1(
-                    controller: controllerAccion,
-                    textFormFieldOuterLabel: "Acción",
-                    textFormFieldObligatory: true,
-                    displayMandatoryField: boolMFAccion,
+                  Divider(
+                    color: textFieldBorderColor,
                   ),
-                ],
-              ),
-              const Spacer(),
-              Row(
-                children: [
-                  FormDatePicker1(
-                    controller: controllerFecha,
-                    textFormFieldOuterLabel: "Fecha",
-                    textFormFieldObligatory: true,
-                    displayMandatoryField: boolMFFecha,
+                  sizedBoxH(height: sizedBoxHeight),
+                  Row(
+                    children: [
+                      SearchableDropDown(
+                        globalKey: keyHDAcc1,
+                        controller: controllerProyecto,
+                        textFormFieldOuterLabel: "Proyecto",
+                        textFormFieldObligatory: true,
+                        items: selectItems,
+                        placeholderText: "Seleccione el proyecto",
+                        initialvalue: controllerProyecto.text.isNotEmpty
+                            ? controllerProyecto.text
+                            : '',
+                        displayMandatoryField: boolMFProyecto,
+                      ),
+                      sizedBoxW(),
+                      TextField1(
+                        controller: controllerAccion,
+                        textFormFieldOuterLabel: "Acción",
+                        textFormFieldObligatory: true,
+                        displayMandatoryField: boolMFAccion,
+                      ),
+                    ],
                   ),
-                  sizedBoxW(),
-                  TextField1(
-                    controller: controllerObservacion,
-                    textFormFieldOuterLabel: "Observación",
-                    textFormFieldObligatory: true,
-                    displayMandatoryField: boolMFObservacion,
+                  sizedBoxH(height: sizedBoxHeight),
+                  Row(
+                    children: [
+                      FormDatePicker1(
+                        controller: controllerFecha,
+                        textFormFieldOuterLabel: "Fecha",
+                        textFormFieldObligatory: true,
+                        displayMandatoryField: boolMFFecha,
+                      ),
+                      sizedBoxW(),
+                      TextField1(
+                        controller: controllerObservacion,
+                        textFormFieldOuterLabel: "Observación",
+                        textFormFieldObligatory: true,
+                        displayMandatoryField: boolMFObservacion,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const Spacer(),
-              Row(
-                children: [
-                  TextField1(
-                    controller: controllerDescripcion,
-                    textFormFieldOuterLabel: "Descripción",
-                    textFormFieldObligatory: true,
-                    textFormMaxLines: 3,
-                    displayMandatoryField: boolMFDescripcion,
-                  )
-                ],
-              ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Button1(
-                    buttonLabel: "Guardar",
-                    buttonIcon: const Icon(Icons.save),
-                    onPressed: () async {
-                      final controllers = [
-                        controllerProyecto,
-                        controllerAccion,
-                        controllerFecha,
-                        controllerDescripcion,
-                        controllerObservacion,
-                      ];
-                      final isEmpty = controllers
-                          .any((controller) => controller.text.isEmpty);
-
-                      var results = {scc: false};
-
-                      if (!isEmpty) {
-                        List<String> valuesList = [];
-                        String valueToAdd = "";
-                        for (var c in controllers) {
-                          valueToAdd = c.text;
-                          if (c == controllerProyecto) {
-                            valueToAdd = myListValues[c.text]!;
+                  sizedBoxH(height: sizedBoxHeight),
+                  Row(
+                    children: [
+                      TextField1(
+                        controller: controllerDescripcion,
+                        textFormFieldOuterLabel: "Descripción",
+                        textFormFieldObligatory: true,
+                        textFormMaxLines: 3,
+                        displayMandatoryField: boolMFDescripcion,
+                      )
+                    ],
+                  ),
+                  sizedBoxH(height: sizedBoxHeight),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Button1(
+                        buttonLabel: "Guardar",
+                        buttonIcon: const Icon(Icons.save),
+                        onPressed: () async {
+                          if (mounted) {
+                            setState(() {
+                              loadingScreen = true;
+                            });
                           }
+                          final controllers = [
+                            controllerProyecto,
+                            controllerAccion,
+                            controllerFecha,
+                            controllerDescripcion,
+                            controllerObservacion,
+                          ];
+                          final isEmpty = controllers
+                              .any((controller) => controller.text.isEmpty);
 
-                          valuesList.add(valueToAdd);
-                        }
-                        valuesList.add("1");
+                          if (!isEmpty) {
+                            List<String> valuesList = [
+                              myListValues[controllerProyecto.text] ?? "",
+                              controllerAccion.text,
+                              controllerFecha.text,
+                              controllerDescripcion.text,
+                              controllerObservacion.text,
+                              "1", //ESTADO
+                            ];
 
-                        if (widget.queryType == queryInsert) {
-                          var results = await insertData(
-                            table: "ACTIVIDADES",
-                            values: valuesList,
-                          );
+                            if (widget.queryType == queryInsert) {
+                              var results = await insertData(
+                                table: "ACTIVIDADES",
+                                values: valuesList,
+                              );
+                              if (results[scc]) {
+                                await insertData(
+                                  table: "LOGS",
+                                  values: [
+                                    "a user",
+                                    typeInsert,
+                                    "ACTIVIDADES",
+                                    "",
+                                    stringForLogs([
+                                      "ID: ${widget.idCode ?? notProvided}",
+                                      "PROYECTO: ${valuesList[0]}",
+                                      "ACCION: ${valuesList[1]}",
+                                      "FECHA: ${valuesList[2]}",
+                                      "DESCRIPCION: ${valuesList[3]}",
+                                      "OBSERVACION: ${valuesList[4]}",
+                                      "ESTADO: ${1}",
+                                    ]),
+                                    getDateTime(),
+                                  ],
+                                );
+                              }
 
-                          // ignore: use_build_context_synchronously
-                          mySnackBar(
-                            context: context,
-                            success: results[scc],
-                            successfulText: "Se introdujeron los datos",
-                            unsuccessfulText: results[err],
-                          );
-                        } else {
-                          var results = await updateData(
-                            table: "ACTIVIDADES",
-                            columns: [],
-                            values: valuesList,
-                            whr: "ID",
-                            whrval: widget.idCode ?? "",
-                          );
+                              mySnackBar(
+                                context: context,
+                                success: results[scc],
+                                successfulText: "Se introdujeron los datos",
+                                unsuccessfulText: results[err],
+                              );
+                            } else {
+                              if (widget.idCode != null) {
+                                var results = await updateData(
+                                  table: "ACTIVIDADES",
+                                  columns: [],
+                                  values: valuesList,
+                                  whr: "ID",
+                                  whrval: widget.idCode!,
+                                );
+                                if (results[scc]) {
+                                  await insertData(
+                                    table: "LOGS",
+                                    values: [
+                                      "a user",
+                                      typeEdit,
+                                      "ACTIVIDADES",
+                                      oDataEdit,
+                                      stringForLogs([
+                                        "ID: ${widget.idCode ?? notProvided}",
+                                        "PROYECTO: ${controllerProyecto.text}",
+                                        "ACCION: ${valuesList[1]}",
+                                        "FECHA: ${valuesList[2]}",
+                                        "DESCRIPCION: ${valuesList[3]}",
+                                        "OBSERVACION: ${valuesList[4]}",
+                                        "ESTADO: ${1}",
+                                      ]),
+                                      getDateTime(),
+                                    ],
+                                  );
+                                }
 
-                          // ignore: use_build_context_synchronously
-                          mySnackBar(
-                            context: context,
-                            success: results[scc],
-                            successfulText: "Se actualizaron los datos",
-                            unsuccessfulText: results[err],
-                          );
-                          // ignore: use_build_context_synchronously
-                          Navigator.of(context).pop();
-                        }
-                      } else {
-                        if (widget.queryType == queryInsert) {
-                          setState(() {
-                            boolMFProyecto = controllerProyecto.text.isEmpty;
-                            boolMFAccion = controllerAccion.text.isEmpty;
-                            boolMFFecha = controllerFecha.text.isEmpty;
-                            boolMFObservacion =
-                                controllerDescripcion.text.isEmpty;
-                            boolMFDescripcion =
-                                controllerObservacion.text.isEmpty;
-                          });
+                                mySnackBar(
+                                  context: context,
+                                  success: results[scc],
+                                  successfulText: "Se actualizaron los datos",
+                                  unsuccessfulText: results[err],
+                                );
+                              } else {
+                                mySnackBar(
+                                  context: context,
+                                  success: false,
+                                  successfulText: "",
+                                  unsuccessfulText: "Error 100034",
+                                );
+                              }
+                              Navigator.of(context).pop();
+                            }
+                          } else {
+                            if (mounted && widget.queryType == queryInsert) {
+                              setState(() {
+                                boolMFProyecto =
+                                    controllerProyecto.text.isEmpty;
+                                boolMFAccion = controllerAccion.text.isEmpty;
+                                boolMFFecha = controllerFecha.text.isEmpty;
+                                boolMFDescripcion =
+                                    controllerDescripcion.text.isEmpty;
+                                boolMFObservacion =
+                                    controllerObservacion.text.isEmpty;
+                              });
 
-                          mySnackBar(
-                            context: context,
-                            success: false,
-                            successfulText: "",
-                            unsuccessfulText:
-                                "Debes llenar los campos obligatorios que son aquellos con asterisco *",
-                          );
-                        }
-                      }
-                    },
+                              mySnackBar(
+                                context: context,
+                                success: false,
+                                successfulText: "",
+                                unsuccessfulText:
+                                    "Debes llenar los campos obligatorios que son aquellos con asterisco *",
+                              );
+                            }
+                          }
+                          if (mounted) {
+                            setState(() {
+                              loadingScreen = false;
+                            });
+                          }
+                        },
+                      ),
+                      if (widget.queryType == queryUpdate) sizedBoxW(width: 10),
+                      if (widget.queryType == queryUpdate)
+                        Button1(
+                          buttonLabel: "Cancelar",
+                          buttonIcon: const Icon(Icons.cancel_outlined),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                    ],
                   ),
                 ],
               ),
             ],
-          );
-        },
+          ),
+          if (loadingScreen) loadScreen(context: context)
+        ],
       ),
     );
   }

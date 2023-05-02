@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:utilidades_condular/common/decoration/dec_outline_input_border.dart';
 import 'package:utilidades_condular/common/myWidgets/my_text.dart';
 import 'package:utilidades_condular/defaul_config.dart';
@@ -45,17 +46,19 @@ class ASearchTextField extends State<SearchTextField> {
   }
 
   void _onSearchTextChanged(String text) {
-    setState(() {
-      if (text.isEmpty) {
-        filteredData = widget.orders;
-      } else {
-        filteredData = widget.orders
-            .where((e) =>
-                e.any((s) => s.toLowerCase().contains(text.toLowerCase())))
-            .toList();
-      }
-      widget.onUpdateSearch(filteredData);
-    });
+    if (mounted) {
+      setState(() {
+        if (text.isEmpty) {
+          filteredData = widget.orders;
+        } else {
+          filteredData = widget.orders
+              .where((e) =>
+                  e.any((s) => s.toLowerCase().contains(text.toLowerCase())))
+              .toList();
+        }
+        widget.onUpdateSearch(filteredData);
+      });
+    }
   }
 
   @override
@@ -95,6 +98,7 @@ class TextField1 extends StatefulWidget {
   final TextEditingController controller;
   final int textFormMaxLines;
   bool displayMandatoryField;
+  bool onlyDigits;
   TextField1({
     Key? key,
     required this.textFormFieldOuterLabel,
@@ -102,6 +106,7 @@ class TextField1 extends StatefulWidget {
     required this.controller,
     this.textFormMaxLines = 1,
     required this.displayMandatoryField,
+    this.onlyDigits = false,
   }) : super(key: key);
 
   @override
@@ -112,7 +117,7 @@ class TextField1Body extends State<TextField1> {
   String displayMsg = "";
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Flexible(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -122,13 +127,15 @@ class TextField1Body extends State<TextField1> {
           ),
           TextField(
             onChanged: (value) {
-              setState(() {
-                if (value.isEmpty) {
-                  widget.displayMandatoryField = true;
-                } else {
-                  widget.displayMandatoryField = false;
-                }
-              });
+              if (mounted && widget.textFormFieldObligatory) {
+                setState(() {
+                  if (value.isEmpty) {
+                    widget.displayMandatoryField = true;
+                  } else {
+                    widget.displayMandatoryField = false;
+                  }
+                });
+              }
             },
             controller: widget.controller,
             maxLines: widget.textFormMaxLines,
@@ -140,6 +147,11 @@ class TextField1Body extends State<TextField1> {
               focusedBorder: textOutlineBorder(),
               enabledBorder: textOutlineBorder(),
             ),
+            inputFormatters: widget.onlyDigits
+                ? [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ]
+                : [],
           ),
           mandatoryTextWidget(
             displayMandatoryField: widget.displayMandatoryField,

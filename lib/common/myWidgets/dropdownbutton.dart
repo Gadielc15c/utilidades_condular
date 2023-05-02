@@ -1,21 +1,26 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:utilidades_condular/common/decoration/dec_outline_input_border.dart';
+import 'package:utilidades_condular/common/myFunctions/map_search.dart';
 import 'package:utilidades_condular/common/myWidgets/labels.dart';
 import 'package:utilidades_condular/common/myWidgets/my_text.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 
 class FormDropDown1 extends StatefulWidget {
   final String initialValue;
-  final List<String> items;
+  final Map<String, String> items;
   final String textFormFieldOuterLabel;
   final bool textFormFieldObligatory;
+  final TextEditingController controller;
   const FormDropDown1({
     Key? key,
     required this.initialValue,
     required this.items,
     required this.textFormFieldOuterLabel,
     required this.textFormFieldObligatory,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -27,8 +32,10 @@ class DropDown1 extends State<FormDropDown1> {
 
   @override
   void initState() {
-    super.initState();
+    widget.controller.text =
+        searchValueReturnKey(theMap: widget.items, value: dropdownvalue)!;
     dropdownvalue = widget.initialValue;
+    super.initState();
   }
 
   @override
@@ -48,18 +55,22 @@ class DropDown1 extends State<FormDropDown1> {
             ),
             value: dropdownvalue,
             icon: const Icon(Icons.arrow_drop_down_sharp),
-            items: widget.items.map((String items) {
+            items: widget.items.values.map((String v) {
               return DropdownMenuItem(
-                value: items,
-                child: Text(items),
+                value: v,
+                child: Text(v),
               );
             }).toList(),
             onChanged: (String? newValue) {
-              setState(() {
-                dropdownvalue = newValue!;
-              });
+              if (mounted) {
+                setState(() {
+                  widget.controller.text = searchValueReturnKey(
+                      theMap: widget.items, value: newValue!)!;
+                });
+              }
             },
           ),
+          mandatoryTextWidget(displayMandatoryField: false),
         ],
       ),
     );
@@ -73,7 +84,7 @@ class SearchableDropDown extends StatefulWidget {
   final String placeholderText;
   final TextEditingController controller;
   final GlobalKey<DropdownSearchState<String>> globalKey;
-  final initialvalue;
+  final String initialvalue;
   bool displayMandatoryField;
 
   SearchableDropDown({
@@ -95,7 +106,7 @@ class SearchableDropDown extends StatefulWidget {
 class SearchableDropDownBody extends State<SearchableDropDown> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Flexible(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -135,11 +146,13 @@ class SearchableDropDownBody extends State<SearchableDropDown> {
             ),
             onChanged: (value) {
               widget.controller.text = value.toString();
-              setState(() {
-                widget.controller.text.isEmpty
-                    ? widget.displayMandatoryField = true
-                    : widget.displayMandatoryField = false;
-              });
+              if (mounted) {
+                setState(() {
+                  widget.controller.text.isEmpty
+                      ? widget.displayMandatoryField = true
+                      : widget.displayMandatoryField = false;
+                });
+              }
             },
           ),
           mandatoryTextWidget(

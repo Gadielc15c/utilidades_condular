@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:utilidades_condular/backend/api_bridge.dart';
+import 'package:utilidades_condular/defaul_config.dart';
 import 'package:utilidades_condular/main.dart';
 import 'package:utilidades_condular/common/myFunctions/auth.dart';
-
-int nivelAcceso = 0;
-var users = const {
-  'F@gmail.com': '1515',
-  'Guev@gmail.com': '1515',
-};
-
-String defaultIncorrectInput = "Usuario y/o Contraseña incorrecta.";
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -19,17 +13,19 @@ class LoginScreen extends StatelessWidget {
   Future<String?> _authUser(LoginData data) async {
     try {
       await Future.delayed(loginTime);
-      if (!users.containsKey(data.name)) {
-        return defaultIncorrectInput;
-      }
-      if (users[data.name] != data.password) {
-        return defaultIncorrectInput;
-      }
-      logInFunc(
-        username: data.name,
-        password: data.password,
+      Map<String, dynamic> result = await verifyLogin(
+        email: data.name,
+        pwd: data.password,
       );
-      return null;
+      if (result[scc]) {
+        logInFunc(
+          username: result[cnt]["EMAIL"],
+          password: result[cnt]["CLAVE"],
+        );
+        return null;
+      } else {
+        return result[err];
+      }
     } catch (e) {
       return "Ha ocurrido un error: $e";
     }
@@ -38,9 +34,6 @@ class LoginScreen extends StatelessWidget {
   Future<String> _recoverPassword(String name) async {
     try {
       await Future.delayed(loginTime);
-      if (!users.containsKey(name)) {
-        return "El correo no existe";
-      }
       return "Funcion deshabilitada";
     } catch (e) {
       return "Ha ocurrido un error: $e";
@@ -58,6 +51,7 @@ class LoginScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const MainPage()));
       },
       onRecoverPassword: _recoverPassword,
+      hideForgotPasswordButton: true,
       messages: LoginMessages(
         userHint: 'Usuario',
         passwordHint: 'Contraseña',

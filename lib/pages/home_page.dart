@@ -22,16 +22,12 @@ class _HomePage extends State<HomePage> {
     double myHeight = colSpaceHeight(context) / 1.2;
 
     void drawerSelectedIndex(int index) {
-      setState(() {
-        selectedIndex = index;
-      });
+      if (mounted) {
+        setState(() {
+          selectedIndex = index;
+        });
+      }
     }
-
-    // void changeState({required var toChange, required var value}) {
-    //   setState(() {
-    //     toChange = value;
-    //   });
-    // }
 
     return Scaffold(
       appBar: AppBar(

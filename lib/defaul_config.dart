@@ -9,15 +9,15 @@ double colSpaceWidth(BuildContext context) {
 }
 
 // For Dates
-String dateFormat = "dd-MM-yyyy";
-String wrongFormat = "Formato Incorrecto";
-String wrongDate = "Fecha Inválida";
-String selectedDate = "Fecha Seleccionada";
-String writeDate = "Ingresar fecha:";
+const String dateFormat = "dd-MM-yyyy";
+const String wrongFormat = "Formato Incorrecto";
+const String wrongDate = "Fecha Inválida";
+const String selectedDate = "Fecha Seleccionada";
+const String writeDate = "Ingresar fecha:";
 
 //
-String cancelOption = "CANCELAR";
-String confirmOption = "CONFIRMAR";
+const String cancelOption = "CANCELAR";
+const String confirmOption = "CONFIRMAR";
 const String mandatoryText = 'Campo Obligatorio';
 
 // NO TOCAR
@@ -26,3 +26,11 @@ const String cnt = 'content';
 const String scc = 'success';
 const String queryInsert = "insert0";
 const String queryUpdate = "update0";
+
+const String typeInsert = "Inserta";
+const String typeEdit = "Actualiza";
+const String typeDelete = "Elimina";
+const String notProvided = "None Provided";
+
+const String defaultYes = "Si";
+const String defaultNo = "No";

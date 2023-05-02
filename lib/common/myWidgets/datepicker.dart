@@ -32,7 +32,7 @@ class DatePicker1 extends State<FormDatePicker1> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Flexible(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,9 +77,11 @@ class DatePicker1 extends State<FormDatePicker1> {
               if (pickedDate != null) {
                 String formattedDate =
                     DateFormat(dateFormat).format(pickedDate);
-                setState(() {
-                  widget.controller.text = formattedDate;
-                });
+                if (mounted) {
+                  setState(() {
+                    widget.controller.text = formattedDate;
+                  });
+                }
               } else {}
             },
           ),

@@ -45,7 +45,7 @@ dependencies:
   mysql1: ^0.20.0
   dropdown_search: ^5.0.6
   flutter_login: ^4.1.1
-  shared_preferences: ^2.0.9
+  shared_preferences: ^2.1.0
   http: ^0.13.5
 
 
