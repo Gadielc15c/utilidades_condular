@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:utilidades_condular/backend/api_bridge.dart';
+import 'package:utilidades_condular/common/myFunctions/auth.dart';
 import 'package:utilidades_condular/common/myFunctions/format_logs.dart';
 import 'package:utilidades_condular/common/myFunctions/get_datetime_utc.dart';
 import 'package:utilidades_condular/common/myWidgets/snack_bar.dart';
@@ -248,7 +249,7 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
                           await insertData(
                             table: "LOGS",
                             values: [
-                              "a user",
+                              await getUser(context) ?? "",
                               typeInsert,
                               "ARCHIOS",
                               "",
