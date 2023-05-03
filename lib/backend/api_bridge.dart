@@ -13,7 +13,8 @@ Future<Map<String, dynamic>> postData({
     'Referrer-Policy': 'no-referrer-when-downgrade',
   };
   final response = await http.post(
-    Uri.parse('http://127.0.0.1:5000/$endpoint'),
+    Uri.parse(
+        'https://constructoracondular-spazz.pythonanywhere.com/$endpoint'),
     headers: headers,
     body: jsonEncode(body),
   );

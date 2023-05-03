@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:utilidades_condular/backend/api_bridge.dart';
+import 'package:utilidades_condular/common/myFunctions/auth.dart';
 import 'package:utilidades_condular/common/myFunctions/format_logs.dart';
 import 'package:utilidades_condular/common/myFunctions/get_datetime_utc.dart';
 import 'package:utilidades_condular/common/myWidgets/sized_boxes.dart';
@@ -244,7 +245,7 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
         await insertData(
           table: "LOGS",
           values: [
-            "a user",
+            await getUser(context) ?? "",
             typeDelete,
             "ACTIVIDADES",
             "",

@@ -41,7 +41,11 @@ Future<void> logOutFunc(BuildContext context) async {
   Navigator.of(context).pushNamed('/login');
 }
 
-Future<String?> getUser() async {
+Future<String?> getUser(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('username');
+  if (prefs.getBool('isLoggedIn') ?? false) {
+    return prefs.getString('username');
+  }
+  Navigator.of(context).pushNamed('/login');
+  return "";
 }

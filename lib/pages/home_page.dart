@@ -76,7 +76,7 @@ class _HomePage extends State<HomePage> {
             padding: EdgeInsets.zero,
             children: [
               FutureBuilder(
-                future: getUser(),
+                future: getUser(context),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data != null) {
                     return UserAccountsDrawerHeader(
