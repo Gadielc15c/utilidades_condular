@@ -2,18 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:utilidades_condular/defaul_config.dart';
 
+const String endp = "endpoint";
+
 Future<Map<String, dynamic>> postData({
-  required String endpoint,
   required Map<String, dynamic> body,
 }) async {
   final headers = {
-    'Content-Type': 'application/json', 
+    'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Referrer-Policy': 'no-referrer-when-downgrade',
   };
   final response = await http.post(
-    Uri.parse('http://75.102.22.98:443/UtilidadesAPI/$endpoint'),
+    Uri.parse('https://constructoracondular.com/API/'),
     headers: headers,
     body: jsonEncode(body),
   );
@@ -29,12 +30,10 @@ Future<Map<String, dynamic>> postData({
 }
 
 Future<Map<String, dynamic>> sendData({
-  required String endpoint,
   required Map<String, dynamic> toSend,
 }) async {
   try {
     return await postData(
-      endpoint: endpoint,
       body: toSend,
     );
   } catch (_) {
@@ -50,16 +49,20 @@ Future<Map<String, dynamic>> verifyLogin({
   required String email,
   required String pwd,
 }) async {
-  final Map<String, dynamic> data = {'email': email, 'pwd': pwd};
-  return sendData(endpoint: 'login', toSend: data);
+  final Map<String, dynamic> data = {'email': email, 'pwd': pwd, endp: 'login'};
+  return sendData(toSend: data);
 }
 
 Future<Map<String, dynamic>> insertData({
   required String table,
   required List<String> values,
 }) async {
-  final Map<String, dynamic> data = {'table': table, 'values': values};
-  return sendData(endpoint: 'insertdb', toSend: data);
+  final Map<String, dynamic> data = {
+    'table': table,
+    'values': values,
+    endp: 'insertdb'
+  };
+  return sendData(toSend: data);
 }
 
 Future<Map<String, dynamic>> updateData({
@@ -75,15 +78,16 @@ Future<Map<String, dynamic>> updateData({
     'values': values,
     'whr': whr,
     'whrval': whrval,
+    endp: 'updatedb'
   };
-  return sendData(endpoint: 'updatedb', toSend: data);
+  return sendData(toSend: data);
 }
 
 Future<Map<String, dynamic>> selectData({
   required String table,
 }) async {
-  final Map<String, dynamic> data = {'table': table};
-  return sendData(endpoint: 'selectdb', toSend: data);
+  final Map<String, dynamic> data = {'table': table, endp: 'selectdb'};
+  return sendData(toSend: data);
 }
 
 Future<Map<String, dynamic>> deleteData({
@@ -93,13 +97,14 @@ Future<Map<String, dynamic>> deleteData({
   final Map<String, dynamic> data = {
     'table': table,
     'id': id,
+    endp: 'deletedb'
   };
-  return sendData(endpoint: 'deletedb', toSend: data);
+  return sendData(toSend: data);
 }
 
 Future<Map<String, dynamic>> spData({
   required String sp,
 }) async {
-  final Map<String, dynamic> data = {'sp': sp};
-  return sendData(endpoint: 'spdb', toSend: data);
+  final Map<String, dynamic> data = {'sp': sp, endp: 'spdb'};
+  return sendData(toSend: data);
 }

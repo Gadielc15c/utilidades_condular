@@ -6,14 +6,14 @@ Text largeLabel1({
 }) {
   return Text(
     text,
-    style: const TextStyle(fontSize: 40),
+    style: const TextStyle(fontSize: 25),
   );
 }
 
 Text normalLabel1({required String text}) {
   return Text(
     text,
-    style: const TextStyle(fontSize: 18),
+    style: const TextStyle(fontSize: 15),
   );
 }
 
