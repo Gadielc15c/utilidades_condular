@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:utilidades_condular/pages/consulta_archivos.dart';
 import 'package:utilidades_condular/pages/consulta_historico_de_acciones.dart';
+import 'package:utilidades_condular/pages/historico_de_archivos.dart';
 import 'package:utilidades_condular/pages/historico_de_acciones.dart';
 import 'package:utilidades_condular/pages/historico_de_archivos.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 import 'package:utilidades_condular/common/myFunctions/auth.dart';
+
+import 'dashboard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -47,25 +51,39 @@ class _HomePage extends State<HomePage> {
             width: myWidth,
             height: myHeight.clamp(570, 760),
             child: selectedIndex == 0
-                ? HistoricoDeAcciones(
+                ? Dashboard(
                     contextHeight: myHeight,
                     contextWidth: myWidth,
                   )
                 : selectedIndex == 1
-                    ? HistoricoDeArchivos(
+                    ? HistoricoDeAcciones(
                         contextHeight: myHeight,
                         contextWidth: myWidth,
                       )
                     : selectedIndex == 2
-                        ? LayoutBuilder(
-                            builder: (context, constraint) {
-                              return ConsultaHistDeAcciones(
-                                widgetHeight: constraint.maxHeight,
-                                widgetWidth: constraint.maxWidth,
-                              );
-                            },
+                        ? HistoricoDeArchivos(
+                            contextHeight: myHeight,
+                            contextWidth: myWidth,
                           )
-                        : const Text('Empty'),
+                        : selectedIndex == 4
+                            ? LayoutBuilder(
+                                builder: (context, constraint) {
+                                  return ConsultaArchv(
+                                    widgetHeight: constraint.maxHeight,
+                                    widgetWidth: constraint.maxWidth,
+                                  );
+                                },
+                              )
+                            : selectedIndex == 4
+                                ? LayoutBuilder(
+                                    builder: (context, constraint) {
+                                      return ConsultaHistDeAcciones(
+                                        widgetHeight: constraint.maxHeight,
+                                        widgetWidth: constraint.maxWidth,
+                                      );
+                                    },
+                                  )
+                                : const Text('Empty'),
           ),
         ),
       ),
@@ -101,26 +119,43 @@ class _HomePage extends State<HomePage> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.label),
-                title: const Text('Historico de Acciones'),
+                leading: const Icon(Icons.dashboard),
+                title: const Text('Dashboard'),
                 onTap: () {
                   drawerSelectedIndex(0);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.label),
-                title: const Text('Historico de Archivos'),
+                leading: const Icon(Icons.access_time_outlined),
+                title: const Text('Historico de Acciones'),
                 onTap: () {
                   drawerSelectedIndex(1);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.label),
+                leading: const Icon(Icons.search),
                 title: const Text('Consulta de Historico'),
                 onTap: () {
+                  drawerSelectedIndex(4);
+                  Navigator.pop(context);
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.create_new_folder),
+                title: const Text('Historico de Archivos'),
+                onTap: () {
                   drawerSelectedIndex(2);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.folder_open),
+                title: const Text('Consulta de Archivos'),
+                onTap: () {
+                  drawerSelectedIndex(3);
                   Navigator.pop(context);
                 },
               ),

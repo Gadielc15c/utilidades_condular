@@ -21,15 +21,45 @@ import 'package:utilidades_condular/defaul_config.dart';
 class HistoricoDeArchivos extends StatefulWidget {
   final double contextHeight;
   final double contextWidth;
-  const HistoricoDeArchivos({
+  String? idCode;
+  String? areaRefText;
+  String? codDeptoText;
+  String? tituloText;
+  String? personaEntText;
+  String? numCopText;
+  String? archivoDigText;
+  String? fechaInDText;
+  String? archivoFiscText;
+  String? fechaInFText;
+  String? observacionText;
+  String? tiempoText;
+  String? estadoText;
+  String queryType;
+
+  HistoricoDeArchivos({
     Key? key,
     required this.contextHeight,
     required this.contextWidth,
+    this.idCode,
+    this.areaRefText,
+    this.codDeptoText,
+    this.tituloText,
+    this.personaEntText,
+    this.numCopText,
+    this.archivoDigText,
+    this.fechaInDText,
+    this.archivoFiscText,
+    this.fechaInFText,
+    this.observacionText,
+    this.tiempoText,
+    this.estadoText,
+    this.queryType = queryInsert,
   }) : super(key: key);
 
   @override
   HistoricoDeArchivosBody createState() => HistoricoDeArchivosBody();
 }
+
 
 class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
   double maxHeight = 165;

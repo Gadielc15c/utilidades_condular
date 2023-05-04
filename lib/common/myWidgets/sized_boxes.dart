@@ -16,7 +16,7 @@ SizedBox sizedBoxH({double height = 10.0}) {
   );
 }
 
-SizedBox sizedBoxPadding({
+SizedBox  sizedBoxPadding({
   required var child,
   double? contextHeight,
   double top = 50,

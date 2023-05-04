@@ -100,7 +100,7 @@ class RowDataSource extends DataGridSource {
   }
 }
 
-class BuildSfDataGrid extends StatefulWidget {
+class BuildSfDataGridArchivo extends StatefulWidget {
   final BuildContext context;
   final List<Map> columnNames;
   final String keyName;
@@ -110,7 +110,7 @@ class BuildSfDataGrid extends StatefulWidget {
   final double widgetWidth;
   final VoidCallback getDataAgain;
   //
-  const BuildSfDataGrid({
+  const BuildSfDataGridArchivo({
     Key? key,
     required this.context,
     required this.columnNames,
@@ -126,7 +126,7 @@ class BuildSfDataGrid extends StatefulWidget {
   BSfDataGrid createState() => BSfDataGrid();
 }
 
-class BSfDataGrid extends State<BuildSfDataGrid> {
+class BSfDataGrid extends State<BuildSfDataGridArchivo> {
   // Handles search
   final searchController = TextEditingController();
 
@@ -178,7 +178,7 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
 
   List<DataGridRow> selectedRows = [];
 
-  Future<void> updateSelectedRows() async {
+  Future<void> updateSelectedRowsArchivos() async {
     List<DataGridRow>? selectedRows = dataGridController.selectedRows;
     if (selectedRows.isNotEmpty && selectedRows.length == 1) {
       Map<String, dynamic> rowMap = {};
@@ -188,14 +188,21 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
         }
       }
 
-      await showUpdateHistoricoDeAccionesDialog(
+      await showUpdateArchivoDialog(
         context: context,
-        idCode: rowMap["ID"],
-        proyectoText: rowMap['PROYECTO'],
-        accionText: rowMap['ACCION'],
-        fechaText: rowMap['FECHA'],
+        idCode: rowMap["COD"],
+        areaRefText: rowMap['AREA_REF'],
+        codDeptoText: rowMap['COD_DEPTO'],
+        tituloText: rowMap['TITULO'],
+        personaEntText: rowMap['PERSONA_ENT'],
+        numCopText: rowMap['NUM_COP'],
+        archivoDigText: rowMap['ARCHIVO_DIG'],
+        fechaInDText: rowMap['FECHA_IN_D'],
+        archivoFiscText: rowMap['ARCHIVO_FISC'],
+        fechaInFText: rowMap['FECHA_IN_F'],
         observacionText: rowMap['OBSERVACION'],
-        descripcionText: rowMap['DESCRIPCION'],
+        tiempoText: rowMap['TIEMPO'],
+        estadoText: rowMap['ESTADO'],
       );
       widget.getDataAgain();
     } else {
@@ -208,7 +215,7 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
     }
   }
 
-  Future<void> deleteSelectedRows() async {
+  Future<void> deleteSelectedRowsArchivos() async {
     int someLength = dataGridController.selectedRows.length;
     if (someLength > 0) {
       bool confirmDeletion = await showDeleteConfirmationDialog(
@@ -231,7 +238,7 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
           rowMap[cell.columnName] = cell.value;
         }
       }
-      var results = await deleteData(table: "ACTIVIDADES", id: rowMap["ID"]);
+      var results = await deleteData(table: "ARCHIVOS", id: rowMap["COD"]);
       mySnackBar(
         context: context,
         success: results[scc],
@@ -240,50 +247,12 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
       );
       if (!results[scc]) {
         return;
-      } else {
-        await insertData(
-          table: "LOGS",
-          values: [
-            await getUser(context) ?? "",
-            typeDelete,
-            "ACTIVIDADES",
-            "",
-            stringForLogs([
-              "ID: ${rowMap['ID']}",
-              "PROYECTO: ${rowMap['PROYECTO']}",
-              "ACCION: ${rowMap['ACCION']}",
-              "FECHA: ${rowMap['FECHA']}",
-              "DESCRIPCION: ${rowMap['DESCRIPCION']}",
-              "OBSERVACION: ${rowMap['OBSERVACION']}",
-              "ESTADO: ${0}",
-            ]),
-            getDateTime(),
-          ],
-        );
       }
+      // no voy agregar ningun maldito log aqui
+
       if (mounted) {
         setState(() {
-          List<String> searchedList = [];
-          if (_originalOrders.length != searchedList.length) {
-            searchedList = _orders.map((e) => e.join()).toList();
-          }
-
-          selectedRows = dataGridController.selectedRows;
-          List<String> selectedRowsTemp = [];
-
-          for (var s in selectedRows) {
-            selectedRowsTemp.add(
-                s.getCells().map((e) => e.value.toString()).toList().join());
-          }
-
-          findListInListOfListAndRemoveIt(_originalOrders, selectedRowsTemp);
-          if (searchedList.isNotEmpty) {
-            findListInListOfListAndRemoveIt(_orders, selectedRowsTemp);
-          }
-
-          selectedRows = [];
-
-          _updateAndPaginateOrders();
+          
         });
       }
     } else {
@@ -313,14 +282,14 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
           columnName: values[widget.keyName],
           maximumWidth: values[widget.keyColumnWidth],
           label: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             alignment: Alignment.centerRight,
             child: Center(
               child: Text(
                 values[widget.keyName],
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 9,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -361,13 +330,13 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
                     Button1(
                       buttonLabel: "Editar",
                       disableButtonIcon: true,
-                      onPressed: () => updateSelectedRows(),
+                      onPressed: () => updateSelectedRowsArchivos(),
                     ),
                     sizedBoxW(width: 10),
                     Button1(
                       buttonLabel: "Eliminar",
                       disableButtonIcon: true,
-                      onPressed: () => deleteSelectedRows(),
+                      onPressed: () => deleteSelectedRowsArchivos(),
                     )
                   ],
                 ),
@@ -418,19 +387,7 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
                   pageCount: _numPages,
                   direction: Axis.horizontal,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: sizedBoxW(),
-                    ),
-                    Button1(
-                      buttonLabel: "Enviar Reporte",
-                      buttonIcon: const Icon(Icons.abc),
-                      disableButtonIcon: true,
-                      onPressed: () => {},
-                    )
-                  ],
-                ),
+            
               ],
             ),
           ),

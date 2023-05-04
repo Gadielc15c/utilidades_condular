@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 import 'package:utilidades_condular/pages/historico_de_acciones.dart';
 
+import '../../pages/historico_de_archivos.dart';
+
 Future<bool> showDeleteConfirmationDialog({
   required BuildContext context,
   required String textTitulo,
@@ -47,6 +49,54 @@ Future<bool> showDeleteConfirmationDialog({
     },
   );
   return result;
+}
+Future<void> showUpdateArchivoDialog({
+  required BuildContext context,
+  required String idCode,
+  required String areaRefText,
+  required String codDeptoText,
+  required String tituloText,
+  required String personaEntText,
+  required String numCopText,
+  required String archivoDigText,
+  required String fechaInDText,
+  required String archivoFiscText,
+  required String fechaInFText,
+  required String observacionText,
+  required String tiempoText,
+  required String estadoText,
+}) async {
+  await showDialog<bool>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return GestureDetector(
+        child: AlertDialog(
+          content: SizedBox(
+            width: colSpaceWidth(context) * 0.5,
+            child: HistoricoDeArchivos(
+              contextHeight: colSpaceHeight(context),
+              contextWidth: colSpaceWidth(context),
+              idCode: idCode,
+              areaRefText: areaRefText,
+              codDeptoText: codDeptoText,
+              tituloText: tituloText,
+              personaEntText: personaEntText,
+              numCopText: numCopText,
+              archivoDigText: archivoDigText,
+              fechaInDText: fechaInDText,
+              archivoFiscText: archivoFiscText,
+              fechaInFText: fechaInFText,
+              observacionText: observacionText,
+              tiempoText: tiempoText,
+              estadoText: estadoText,
+              queryType: queryUpdate,
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 Future<void> showUpdateHistoricoDeAccionesDialog({

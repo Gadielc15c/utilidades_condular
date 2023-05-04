@@ -49,6 +49,8 @@ dependencies:
   http: ^0.13.5
   mailer: ^6.0.1
   smtpd: ^0.2.0
+  responsive_table: ^0.2.0+2
+  expandable_datatable: ^0.0.7
 
 
 dev_dependencies:

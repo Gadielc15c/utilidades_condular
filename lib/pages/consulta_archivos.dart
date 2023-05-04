@@ -1,7 +1,4 @@
-// ignore_for_file: unused_import, no_leading_underscores_for_local_identifiers, unused_local_variable
-
 import 'package:flutter/material.dart';
-import 'package:responsive_table/responsive_table.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:utilidades_condular/backend/api_bridge.dart';
@@ -12,24 +9,26 @@ import 'package:utilidades_condular/common/myWidgets/build_data_grid.dart';
 import 'package:utilidades_condular/common/myWidgets/snack_bar.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 
-class ConsultaHistDeAcciones extends StatefulWidget {
+import '../common/myWidgets/build_data_grid_test.dart';
+
+class ConsultaArchv extends StatefulWidget {
   final double widgetHeight;
   final double widgetWidth;
-  const ConsultaHistDeAcciones({
+  const ConsultaArchv({
     Key? key,
     required this.widgetHeight,
     required this.widgetWidth,
   }) : super(key: key);
 
   @override
-  ConsultaHistDeAccionesBody createState() => ConsultaHistDeAccionesBody();
+  ConsultaArchvBody createState() => ConsultaArchvBody();
 }
 
-class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
+class ConsultaArchvBody extends State<ConsultaArchv> {
   Future<List<List<String>>>? _rowDataFuture;
 
   Future<List<List<String>>> _populateTable() async {
-    var results = await spData(sp: "get_actividades");
+    var results = await spData(sp: "get_archivos");
     List<List<String>> rowData = [];
     if (results[scc]) {
       Map<String, dynamic> myContent = results[cnt];
@@ -40,22 +39,22 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
           continue;
         }
         for (var key2 in value.keys) {
-          String newKey = key2.toString();
-          if (key2 == "ACCION_TITLE") {
-            newKey = "ACCION";
-          }
-          if (key2 == "FK_PROYECTO") {
-            newKey = "PROYECTO";
-          }
-          temp[newKey] = value[key2].toString();
+          temp[key2] = value[key2].toString();
         }
         rowData.add([
-          "${temp['ID']}",
-          "${temp['PROYECTO']}",
-          "${temp['ACCION']}",
-          "${temp['FECHA']}",
-          "${temp['DESCRIPCION']}",
+          "${temp['COD']}",
+          "${temp['AREA_REF']}",
+          "${temp['COD_DEPTO']}",
+          "${temp['TITULO']}",
+          "${temp['PERSONA_ENT']}",
+          "${temp['ARCHIVO_DIG']}",
+          "${temp['FECHA_IN_D']}",
+          "${temp['ARCHIVO_FISC']}",
+          "${temp['NUM_COP']}"
+          "${temp['FECHA_IN_F']}",
           "${temp['OBSERVACION']}",
+          "${temp['TIEMPO']}",
+          "${temp['ESTADO']}",
         ]);
       }
     } else {
@@ -73,7 +72,6 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
   @override
   void initState() {
     _rowDataFuture = _populateTable();
-
     super.initState();
   }
 
@@ -83,12 +81,18 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
     String keyColumnWidth = "columnWidth";
 
     List<Map> columnsName = [
-      {keyName: "ID", keyColumnWidth: 110.0},
-      {keyName: "PROYECTO", keyColumnWidth: 160.0},
-      {keyName: "ACCION", keyColumnWidth: 160.0},
-      {keyName: "FECHA", keyColumnWidth: 155.0},
-      {keyName: "DESCRIPCION", keyColumnWidth: double.nan},
+      {keyName: "ID", keyColumnWidth: 100.0},
+      {keyName: "AREA REF", keyColumnWidth: 100.0},
+      {keyName: "COD. DEPTO", keyColumnWidth: 160.0},
+      {keyName: "TITULO", keyColumnWidth: 160.0},
+      {keyName: "DELIVERY", keyColumnWidth: 160.0},
+      {keyName: "DIGITAL", keyColumnWidth: 100.0},
+      {keyName: "FECHA_IN_D", keyColumnWidth: 100.0},
+      {keyName: "FÍSICO", keyColumnWidth: 100.0},
+      {keyName: "FECHA_IN_F", keyColumnWidth: 100.0},
       {keyName: "OBSERVACION", keyColumnWidth: double.nan},
+      {keyName: "TIEMPO", keyColumnWidth: 100.0},
+      {keyName: "ESTADO", keyColumnWidth: 30.0},
     ];
 
     Future<bool> areListsEqual(
@@ -111,6 +115,7 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
       return true;
     }
 
+    // ignore: no_leading_underscores_for_local_identifiers
     Widget _buildBasicTable(List<List<String>> rowData) {
       List headers = columnsName.map((column) => column[keyName]).toList();
 
@@ -118,14 +123,14 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
         child: Column(
           children: [
             const Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(2.0),
               child: Text(
-                'Consulta Histórico',
+                'Consulta de Archivos',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             const Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(.0),
               child: Text(
                 'Para editar usar versión de escritorio',
                 style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
@@ -194,7 +199,7 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            BuildSfDataGrid(
+                            BuildSfDataGridArchivo(
                               context: context,
                               columnNames: columnsName,
                               keyName: keyName,
