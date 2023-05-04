@@ -47,6 +47,8 @@ dependencies:
   flutter_login: ^4.1.1
   shared_preferences: ^2.1.0
   http: ^0.13.5
+  mailer: ^6.0.1
+  smtpd: ^0.2.0
 
 
 dev_dependencies:

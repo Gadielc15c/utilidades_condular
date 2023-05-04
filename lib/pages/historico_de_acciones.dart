@@ -19,6 +19,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:utilidades_condular/common/myWidgets/waiting_screen.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 
+import '../common/myFunctions/send_email.dart';
+
 class HistoricoDeAcciones extends StatefulWidget {
   final double contextHeight;
   final double contextWidth;
@@ -154,65 +156,44 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
               Column(
                 children: [
                   Center(
-                    child: largeLabel1(text: "HISTORICO DE ACCIONES"),
+                    child: normalLabel1(text: "HISTORICO DE ACCIONES"),
                   ),
                   Divider(
                     color: textFieldBorderColor,
                   ),
                   sizedBoxH(height: sizedBoxHeight),
-                  Row(
-                    children: [
-                      SearchableDropDown(
-                        globalKey: keyHDAcc1,
-                        controller: controllerProyecto,
-                        textFormFieldOuterLabel: "Proyecto",
-                        textFormFieldObligatory: true,
-                        items: selectItems,
-                        placeholderText: "Seleccione el proyecto",
-                        initialvalue: controllerProyecto.text.isNotEmpty
-                            ? controllerProyecto.text
-                            : '',
-                        displayMandatoryField: boolMFProyecto,
-                      ),
-                      sizedBoxW(),
-                      TextField1(
-                        controller: controllerAccion,
-                        textFormFieldOuterLabel: "Acción",
-                        textFormFieldObligatory: true,
-                        displayMandatoryField: boolMFAccion,
-                      ),
-                    ],
-                  ),
-                  sizedBoxH(height: sizedBoxHeight),
-                  Row(
-                    children: [
-                      FormDatePicker1(
-                        controller: controllerFecha,
-                        textFormFieldOuterLabel: "Fecha",
-                        textFormFieldObligatory: true,
-                        displayMandatoryField: boolMFFecha,
-                      ),
-                      sizedBoxW(),
-                      TextField1(
-                        controller: controllerObservacion,
-                        textFormFieldOuterLabel: "Observación",
-                        textFormFieldObligatory: true,
-                        displayMandatoryField: boolMFObservacion,
-                      ),
-                    ],
-                  ),
-                  sizedBoxH(height: sizedBoxHeight),
-                  Row(
-                    children: [
-                      TextField1(
-                        controller: controllerDescripcion,
-                        textFormFieldOuterLabel: "Descripción",
-                        textFormFieldObligatory: true,
-                        textFormMaxLines: 3,
-                        displayMandatoryField: boolMFDescripcion,
-                      )
-                    ],
-                  ),
+                  LayoutBuilder(builder:
+                      (BuildContext context, BoxConstraints constraints) {
+                    if (constraints.maxWidth > 600) {
+                      return ColumnLayout(
+                          keyHDAcc1: keyHDAcc1,
+                          controllerProyecto: controllerProyecto,
+                          selectItems: selectItems,
+                          boolMFProyecto: boolMFProyecto,
+                          controllerAccion: controllerAccion,
+                          boolMFAccion: boolMFAccion,
+                          controllerFecha: controllerFecha,
+                          boolMFFecha: boolMFFecha,
+                          controllerObservacion: controllerObservacion,
+                          boolMFObservacion: boolMFObservacion,
+                          controllerDescripcion: controllerDescripcion,
+                          boolMFDescripcion: boolMFDescripcion);
+                    }
+                    return RowView(
+                        keyHDAcc1: keyHDAcc1,
+                        controllerProyecto: controllerProyecto,
+                        selectItems: selectItems,
+                        boolMFProyecto: boolMFProyecto,
+                        controllerAccion: controllerAccion,
+                        boolMFAccion: boolMFAccion,
+                        sizedBoxHeight: sizedBoxHeight,
+                        controllerFecha: controllerFecha,
+                        boolMFFecha: boolMFFecha,
+                        controllerObservacion: controllerObservacion,
+                        boolMFObservacion: boolMFObservacion,
+                        controllerDescripcion: controllerDescripcion,
+                        boolMFDescripcion: boolMFDescripcion);
+                  }),
                   sizedBoxH(height: sizedBoxHeight),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -247,6 +228,7 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
                             ];
 
                             if (widget.queryType == queryInsert) {
+                              generateHtmlAndSendEmail(valuesList);
                               var results = await insertData(
                                 table: "ACTIVIDADES",
                                 values: valuesList,
@@ -373,6 +355,195 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
           if (loadingScreen) loadScreen(context: context)
         ],
       ),
+    );
+  }
+}
+
+// Layouts Classes 
+class RowView extends StatelessWidget {
+  const RowView({
+    super.key,
+    required this.keyHDAcc1,
+    required this.controllerProyecto,
+    required this.selectItems,
+    required this.boolMFProyecto,
+    required this.controllerAccion,
+    required this.boolMFAccion,
+    required this.sizedBoxHeight,
+    required this.controllerFecha,
+    required this.boolMFFecha,
+    required this.controllerObservacion,
+    required this.boolMFObservacion,
+    required this.controllerDescripcion,
+    required this.boolMFDescripcion,
+  });
+
+  final GlobalKey<DropdownSearchState<String>> keyHDAcc1;
+  final TextEditingController controllerProyecto;
+  final List selectItems;
+  final bool boolMFProyecto;
+  final TextEditingController controllerAccion;
+  final bool boolMFAccion;
+  final double sizedBoxHeight;
+  final TextEditingController controllerFecha;
+  final bool boolMFFecha;
+  final TextEditingController controllerObservacion;
+  final bool boolMFObservacion;
+  final TextEditingController controllerDescripcion;
+  final bool boolMFDescripcion;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 60),
+            child: SearchableDropDown(
+              globalKey: keyHDAcc1,
+              controller: controllerProyecto,
+              textFormFieldOuterLabel: "Proyecto",
+              textFormFieldObligatory: true,
+              items: selectItems,
+              placeholderText: "Seleccione el proyecto",
+              initialvalue: controllerProyecto.text.isNotEmpty
+                  ? controllerProyecto.text
+                  : '',
+              displayMandatoryField: boolMFProyecto,
+            ),
+          ),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 60),
+            child: TextField1(
+              controller: controllerAccion,
+              textFormFieldOuterLabel: "Acción",
+              textFormFieldObligatory: true,
+              displayMandatoryField: boolMFAccion,
+            ),
+          ),
+          sizedBoxH(height: 3),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 60),
+            child: FormDatePicker1(
+              controller: controllerFecha,
+              textFormFieldOuterLabel: "Fecha",
+              textFormFieldObligatory: true,
+              displayMandatoryField: boolMFFecha,
+            ),
+          ),
+     sizedBoxH(height: 3),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 60),
+            child: TextField1(
+              controller: controllerObservacion,
+              textFormFieldOuterLabel: "Observación",
+              textFormFieldObligatory: true,
+              displayMandatoryField: boolMFObservacion,
+            ),
+          ),
+          sizedBoxH(height: 3),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 60),
+            child: TextField1(
+              controller: controllerDescripcion,
+              textFormFieldOuterLabel: "Descripción",
+              textFormFieldObligatory: true,
+              textFormMaxLines: 3,
+              displayMandatoryField: boolMFDescripcion,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ColumnLayout extends StatelessWidget {
+  const ColumnLayout({
+    super.key,
+    required this.keyHDAcc1,
+    required this.controllerProyecto,
+    required this.selectItems,
+    required this.boolMFProyecto,
+    required this.controllerAccion,
+    required this.boolMFAccion,
+    required this.controllerFecha,
+    required this.boolMFFecha,
+    required this.controllerObservacion,
+    required this.boolMFObservacion,
+    required this.controllerDescripcion,
+    required this.boolMFDescripcion,
+  });
+
+  final GlobalKey<DropdownSearchState<String>> keyHDAcc1;
+  final TextEditingController controllerProyecto;
+  final List selectItems;
+  final bool boolMFProyecto;
+  final TextEditingController controllerAccion;
+  final bool boolMFAccion;
+  final TextEditingController controllerFecha;
+  final bool boolMFFecha;
+  final TextEditingController controllerObservacion;
+  final bool boolMFObservacion;
+  final TextEditingController controllerDescripcion;
+  final bool boolMFDescripcion;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            SearchableDropDown(
+              globalKey: keyHDAcc1,
+              controller: controllerProyecto,
+              textFormFieldOuterLabel: "Proyecto",
+              textFormFieldObligatory: true,
+              items: selectItems,
+              placeholderText: "Seleccione el proyecto",
+              initialvalue: controllerProyecto.text.isNotEmpty
+                  ? controllerProyecto.text
+                  : '',
+              displayMandatoryField: boolMFProyecto,
+            ),
+            sizedBoxW(width: 5),
+            TextField1(
+              controller: controllerAccion,
+              textFormFieldOuterLabel: "Acción",
+              textFormFieldObligatory: true,
+              displayMandatoryField: boolMFAccion,
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            FormDatePicker1(
+              controller: controllerFecha,
+              textFormFieldOuterLabel: "Fecha",
+              textFormFieldObligatory: true,
+              displayMandatoryField: boolMFFecha,
+            ),            sizedBoxW(width: 5),
+
+            TextField1(
+              controller: controllerObservacion,
+              textFormFieldOuterLabel: "Observación",
+              textFormFieldObligatory: true,
+              displayMandatoryField: boolMFObservacion,
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            TextField1(
+              controller: controllerDescripcion,
+              textFormFieldOuterLabel: "Descripción",
+              textFormFieldObligatory: true,
+              textFormMaxLines: 3,
+              displayMandatoryField: boolMFDescripcion,
+            )
+          ],
+        ),
+      ],
     );
   }
 }
