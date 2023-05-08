@@ -51,6 +51,7 @@ dependencies:
   smtpd: ^0.2.0
   responsive_table: ^0.2.0+2
   expandable_datatable: ^0.0.7
+  dashboard: ^0.0.3+1
 
 
 dev_dependencies:

@@ -65,7 +65,7 @@ class _HomePage extends State<HomePage> {
                             contextHeight: myHeight,
                             contextWidth: myWidth,
                           )
-                        : selectedIndex == 4
+                        : selectedIndex == 3
                             ? LayoutBuilder(
                                 builder: (context, constraint) {
                                   return ConsultaArchv(

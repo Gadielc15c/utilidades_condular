@@ -281,20 +281,20 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
                             values: [
                               await getUser(context) ?? "",
                               typeInsert,
-                              "ARCHIOS",
+                              "ARCHIVOS",
                               "",
                               stringForLogs([
                                 "ID: $notProvided",
                                 "AREA_REF: ${valuesList[0]}",
                                 "COD_DEPTO: ${valuesList[1]}",
-                                "TITULO: ${valuesList[2]}",
+                                "TÍTULO: ${valuesList[2]}",
                                 "PERSONA_ENT: ${valuesList[3]}",
                                 "NUM_COP: ${valuesList[4]}",
                                 "ARCHIVO_DIG: ${valuesList[5]}",
                                 "FECHA_IN_D: ${valuesList[6]}",
                                 "ARCHIVO_FISC: ${valuesList[7]}",
                                 "FECHA_IN_F: ${valuesList[8]}",
-                                "OBSERVACION: ${valuesList[9]}",
+                                "OBSERVACIÓN: ${valuesList[9]}",
                                 "TIEMPO: ${valuesList[10]}",
                                 "ESTADO: ${1}",
                               ]),
@@ -326,7 +326,7 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
                           success: false,
                           successfulText: "Se introdujeron los datos",
                           unsuccessfulText:
-                              "Debes llenar los campos obligatorios que son aquellos con asterisco *",
+                              "Debes llenar los campos obligatorios  *",
                         );
                       }
                       if (mounted) {

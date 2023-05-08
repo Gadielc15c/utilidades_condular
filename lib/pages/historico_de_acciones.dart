@@ -326,7 +326,7 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
                                 success: false,
                                 successfulText: "",
                                 unsuccessfulText:
-                                    "Debes llenar los campos obligatorios que son aquellos con asterisco *",
+                                    "Debes llenar los campos obligatorios *",
                               );
                             }
                           }

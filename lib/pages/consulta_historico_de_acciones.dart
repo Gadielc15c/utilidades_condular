@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import, no_leading_underscores_for_local_identifiers, unused_local_variable
+// ignore_for_file: unused_import, no_leading_underscores_for_local_identifiers, unused_local_variable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:responsive_table/responsive_table.dart';
@@ -59,7 +59,7 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
         ]);
       }
     } else {
-      // ignore: use_build_context_synchronously
+
       mySnackBar(
         context: context,
         success: false,
