@@ -35,7 +35,7 @@ class _HomePage extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Construcciones Modulares"),
+        title: const Text("CONDULAR"),
         backgroundColor: Colors.red,
       ),
       body: Container(
@@ -128,7 +128,7 @@ class _HomePage extends State<HomePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.access_time_outlined),
-                title: const Text('Historico de Acciones'),
+                title: const Text('Histórico de Acciones'),
                 onTap: () {
                   drawerSelectedIndex(1);
                   Navigator.pop(context);
@@ -136,7 +136,7 @@ class _HomePage extends State<HomePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.search),
-                title: const Text('Consulta de Historico'),
+                title: const Text('Consulta de Histórico'),
                 onTap: () {
                   drawerSelectedIndex(4);
                   Navigator.pop(context);
@@ -145,7 +145,7 @@ class _HomePage extends State<HomePage> {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.create_new_folder),
-                title: const Text('Historico de Archivos'),
+                title: const Text('Histórico de Archivos'),
                 onTap: () {
                   drawerSelectedIndex(2);
                   Navigator.pop(context);
@@ -162,7 +162,7 @@ class _HomePage extends State<HomePage> {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.logout),
-                title: const Text('Log out'),
+                title: const Text('Salir'),
                 onTap: () {
                   logOutFunc(context);
                 },

@@ -344,8 +344,7 @@ Future<double> _getChangesPercentageForCurrentMonth() async {
       try {
         activityDate = dateFormat.parse(value['FECHA'].toString());
       } catch (e) {
-        print("Error al analizar la fecha: $e");
-        print(value['FECHA'].toString());
+       
         continue;
       }
 

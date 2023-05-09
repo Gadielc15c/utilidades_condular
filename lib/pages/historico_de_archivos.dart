@@ -271,11 +271,7 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
                           unsuccessfulText: results[err],
                         );
 
-                        if (results[scc]) {
-                          // for (var controller in controllers) {
-                          //   controller.clear();
-                          // }
-
+                        if (results[scc]) {          
                           await insertData(
                             table: "LOGS",
                             values: [

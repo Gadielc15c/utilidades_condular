@@ -8,11 +8,11 @@ class Auth {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? expirationTime = prefs.getInt('sessionExpiration');
 
-    if (expirationTime != null &&
-        DateTime.now().millisecondsSinceEpoch > expirationTime) {
-      await logout();
-      return false;
-    }
+    // if (expirationTime != null &&
+    //     DateTime.now().millisecondsSinceEpoch > expirationTime) {
+    //   await logout();
+    //   return false;
+    // } COMENTADO POR FINES MAMAGUEVISTICOS 
     return prefs.getBool('isLoggedIn') ?? false;
   }
 
@@ -22,7 +22,7 @@ class Auth {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int expirationTime =
-        DateTime.now().add(const Duration(minutes: 30)).millisecondsSinceEpoch;
+        DateTime.now().add(const Duration(minutes: 20)).millisecondsSinceEpoch;
 
     await prefs.setString('username', username);
     await prefs.setString('password', password);

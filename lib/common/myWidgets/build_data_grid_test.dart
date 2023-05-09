@@ -248,12 +248,9 @@ class BSfDataGrid extends State<BuildSfDataGridArchivo> {
       if (!results[scc]) {
         return;
       }
-      // no voy agregar ningun maldito log aqui
 
       if (mounted) {
-        setState(() {
-          
-        });
+        setState(() {});
       }
     } else {
       mySnackBar(
@@ -302,97 +299,86 @@ class BSfDataGrid extends State<BuildSfDataGridArchivo> {
     }
     //
 
-    return SfDataGridTheme(
-      data: SfDataGridThemeData(
-        selectionColor: const Color.fromARGB(255, 235, 235, 235),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+     return SfDataGridTheme(
+  data: SfDataGridThemeData(
+    selectionColor: const Color.fromARGB(255, 235, 235, 235),
+  ),
+  child: Row(
+    children: [
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      height: 50,
-                      width: 250,
-                      child: SearchTextField(
-                        searchController: searchController,
-                        onUpdateSearch: _updateSearch,
-                        textFormFieldOuterLabel: "Buscar",
-                        textFormFieldObligatory: false,
-                        hintText: "Buscar",
-                        orders: _originalOrders,
-                      ),
-                    ),
-                    Expanded(child: sizedBoxW()),
-                    Button1(
-                      buttonLabel: "Editar",
-                      disableButtonIcon: true,
-                      onPressed: () => updateSelectedRowsArchivos(),
-                    ),
-                    sizedBoxW(width: 10),
-                    Button1(
-                      buttonLabel: "Eliminar",
-                      disableButtonIcon: true,
-                      onPressed: () => deleteSelectedRowsArchivos(),
-                    )
-                  ],
-                ),
                 SizedBox(
-                  height: widget.widgetHeight
-                      .clamp(0, (widget.widgetHeight).abs() + 1),
-                  child: SfDataGrid(
-                    controller: dataGridController,
-                    onSelectionChanged: (addedRows, removedRows) => {
-                      dataGridController.selectedRows = addedRows,
-                    },
-                    allowPullToRefresh: true,
-                    onQueryRowHeight: (details) {
-                      return details.getIntrinsicRowHeight(details.rowIndex);
-                    },
-                    isScrollbarAlwaysShown: true,
-                    frozenColumnsCount: 0,
-                    columnWidthMode: ColumnWidthMode.fill,
-                    columnWidthCalculationRange:
-                        ColumnWidthCalculationRange.allRows,
-                    headerGridLinesVisibility: GridLinesVisibility.none,
-                    gridLinesVisibility: GridLinesVisibility.none,
-                    allowSorting: true,
-                    allowMultiColumnSorting: true,
-                    selectionMode: SelectionMode.single,
-                    columns: dataColumnsName,
-                    source: rDataSource,
-                    footerFrozenRowsCount: 1,
-                    footer: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _orders.length == _originalOrders.length
-                              ? '${_orders.length} registros'
-                              : '${_orders.length} de ${_originalOrders.length} registros',
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 140, 140, 140),
-                          ),
-                        ),
-                      ],
-                    ),
+                  height: 50,
+                  width: 250,
+                  child: SearchTextField(
+                    searchController: searchController,
+                    onUpdateSearch: _updateSearch,
+                    textFormFieldOuterLabel: "Buscar",
+                    textFormFieldObligatory: false,
+                    hintText: "Buscar",
+                    orders: _originalOrders,
                   ),
                 ),
-                SfDataPager(
-                  controller: dataPagerController,
-                  delegate: rDataSource,
-                  pageCount: _numPages,
-                  direction: Axis.horizontal,
-                ),
-            
+                Expanded(child: sizedBoxW()),
               ],
             ),
-          ),
-        ],
+            SizedBox(
+              height: widget.widgetHeight
+                  .clamp(0, (widget.widgetHeight).abs() + 1),
+              child: SfDataGrid(
+                controller: dataGridController,
+                onSelectionChanged: (addedRows, removedRows) => {
+                  dataGridController.selectedRows = addedRows,
+                },
+                allowPullToRefresh: true,
+                onQueryRowHeight: (details) {
+                  return details.getIntrinsicRowHeight(details.rowIndex);
+                },
+                isScrollbarAlwaysShown: true,
+                frozenColumnsCount: 0,
+                columnWidthMode: ColumnWidthMode.auto, // Cambia esta línea
+                columnWidthCalculationRange:
+                    ColumnWidthCalculationRange.allRows,
+                headerGridLinesVisibility: GridLinesVisibility.none,
+                gridLinesVisibility: GridLinesVisibility.none,
+                allowSorting: true,
+                allowMultiColumnSorting: true,
+                selectionMode: SelectionMode.single,
+                columns: dataColumnsName,
+                source: rDataSource,
+                footerFrozenRowsCount: 1,
+                footer: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _orders.length == _originalOrders.length
+                          ? '${_orders.length} registros'
+                          : '${_orders.length} de ${_originalOrders.length} registros',
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 140, 140, 140),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SfDataPager(
+              controller: dataPagerController,
+              delegate: rDataSource,
+              pageCount: _numPages,
+              direction: Axis.horizontal,
+            ),
+          ],
+        ),
       ),
-    );
+    ],
+  ),
+);
+
   }
 }

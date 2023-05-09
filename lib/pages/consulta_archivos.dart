@@ -52,7 +52,7 @@ class ConsultaArchvBody extends State<ConsultaArchv> {
           "${temp['ARCHIVO_FISC']}",
           "${temp['NUM_COP']}"
           "${temp['FECHA_IN_F']}",
-          "${temp['OBSERVACION']}",
+          "${temp['OBSERVACIÓN']}",
           "${temp['TIEMPO']}",
           "${temp['ESTADO']}",
         ]);
@@ -90,7 +90,7 @@ class ConsultaArchvBody extends State<ConsultaArchv> {
       {keyName: "FECHA_IN_D", keyColumnWidth: 100.0},
       {keyName: "FÍSICO", keyColumnWidth: 100.0},
       {keyName: "FECHA_IN_F", keyColumnWidth: 100.0},
-      {keyName: "OBSERVACION", keyColumnWidth: double.nan},
+      {keyName: "OBSERVACIÓN", keyColumnWidth: double.nan},
       {keyName: "TIEMPO", keyColumnWidth: 100.0},
       {keyName: "ESTADO", keyColumnWidth: 30.0},
     ];

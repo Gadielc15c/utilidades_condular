@@ -423,12 +423,6 @@ class BSfDataGrid extends State<BuildSfDataGrid> {
                     Expanded(
                       child: sizedBoxW(),
                     ),
-                    Button1(
-                      buttonLabel: "Enviar Reporte",
-                      buttonIcon: const Icon(Icons.abc),
-                      disableButtonIcon: true,
-                      onPressed: () => {},
-                    )
                   ],
                 ),
               ],
