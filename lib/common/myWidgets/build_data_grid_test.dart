@@ -26,6 +26,38 @@ RowDataSource rDataSource = RowDataSource();
 DataPagerController dataPagerController = DataPagerController();
 DataGridController dataGridController = DataGridController();
 
+List<Widget> createCellsRow({
+  required DataGridRow row,
+}) {
+  List<Column> temp = [];
+  int count = 0;
+  for (var dataGridCell in row.getCells()) {
+    String txt = dataGridCell.value.toString();
+    if (count == 5 || count == 7) {
+      txt = defaultSelectionOptions[txt] ?? "1";
+    }
+    count++;
+    temp.add(
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 35),
+            child: Text(
+              textAlign: TextAlign.left,
+              txt,
+              softWrap: true,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  return temp;
+}
+
 class RowDataSource extends DataGridSource {
   RowDataSource() {
     _paginatedOrders = _orders
@@ -44,22 +76,8 @@ class RowDataSource extends DataGridSource {
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
-        cells: row.getCells().map<Widget>((dataGridCell) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 35),
-            child: Text(
-              textAlign: TextAlign.left,
-              dataGridCell.value.toString(),
-              softWrap: true,
-            ),
-          ),
-        ],
-      );
-    }).toList());
+      cells: createCellsRow(row: row),
+    );
   }
 
   @override
@@ -190,19 +208,18 @@ class BSfDataGrid extends State<BuildSfDataGridArchivo> {
 
       await showUpdateArchivoDialog(
         context: context,
-        idCode: rowMap["COD"],
-        areaRefText: rowMap['AREA_REF'],
-        codDeptoText: rowMap['COD_DEPTO'],
+        idCode: rowMap["ID"],
+        areaRefText: rowMap['AREA REF'],
+        codDeptoText: rowMap['COD. DEPTO'],
         tituloText: rowMap['TITULO'],
-        personaEntText: rowMap['PERSONA_ENT'],
+        personaEntText: rowMap['DELIVERY'],
         numCopText: rowMap['NUM_COP'],
-        archivoDigText: rowMap['ARCHIVO_DIG'],
+        archivoDigText: rowMap['DIGITAL'],
         fechaInDText: rowMap['FECHA_IN_D'],
-        archivoFiscText: rowMap['ARCHIVO_FISC'],
+        archivoFiscText: rowMap['FISICO'],
         fechaInFText: rowMap['FECHA_IN_F'],
         observacionText: rowMap['OBSERVACION'],
         tiempoText: rowMap['TIEMPO'],
-        estadoText: rowMap['ESTADO'],
       );
       widget.getDataAgain();
     } else {
@@ -238,7 +255,7 @@ class BSfDataGrid extends State<BuildSfDataGridArchivo> {
           rowMap[cell.columnName] = cell.value;
         }
       }
-      var results = await deleteData(table: "ARCHIVOS", id: rowMap["COD"]);
+      var results = await deleteData(table: "ARCHIVOS", id: rowMap["ID"]);
       mySnackBar(
         context: context,
         success: results[scc],
@@ -247,10 +264,58 @@ class BSfDataGrid extends State<BuildSfDataGridArchivo> {
       );
       if (!results[scc]) {
         return;
+      } else {
+        await insertData(
+          table: "LOGS",
+          values: [
+            await getUser(context) ?? "",
+            typeDelete,
+            "ARCHIVOS",
+            "",
+            stringForLogs([
+              "COD: ${rowMap['ID']}",
+              "AREA_REF: ${rowMap['AREA_REF']}",
+              "COD_DEPTO: ${rowMap['COD_DEPTO']}",
+              "TITULO: ${rowMap['TITULO']}",
+              "PERSONA_ENT: ${rowMap['PERSONA_ENT']}",
+              "NUM_COP: ${rowMap['NUM_COP']}",
+              "ARCHIVO_DIG: ${rowMap['ARCHIVO_DIG']}",
+              "FECHA_IN_D: ${rowMap['FECHA_IN_D']}",
+              "ARCHIVO_FISC: ${rowMap['ARCHIVO_FISC']}",
+              "FECHA_IN_F: ${rowMap['FECHA_IN_F']}",
+              "OBSERVACION: ${rowMap['OBSERVACION']}",
+              "TIEMPO: ${rowMap['TIEMPO']}",
+              "ESTADO: ${0}",
+            ]),
+            getDateTime(),
+          ],
+        );
       }
 
       if (mounted) {
-        setState(() {});
+        setState(() {
+          List<String> searchedList = [];
+          if (_originalOrders.length != searchedList.length) {
+            searchedList = _orders.map((e) => e.join()).toList();
+          }
+
+          selectedRows = dataGridController.selectedRows;
+          List<String> selectedRowsTemp = [];
+
+          for (var s in selectedRows) {
+            selectedRowsTemp.add(
+                s.getCells().map((e) => e.value.toString()).toList().join());
+          }
+
+          findListInListOfListAndRemoveIt(_originalOrders, selectedRowsTemp);
+          if (searchedList.isNotEmpty) {
+            findListInListOfListAndRemoveIt(_orders, selectedRowsTemp);
+          }
+
+          selectedRows = [];
+
+          _updateAndPaginateOrders();
+        });
       }
     } else {
       mySnackBar(
@@ -299,86 +364,96 @@ class BSfDataGrid extends State<BuildSfDataGridArchivo> {
     }
     //
 
-     return SfDataGridTheme(
-  data: SfDataGridThemeData(
-    selectionColor: const Color.fromARGB(255, 235, 235, 235),
-  ),
-  child: Row(
-    children: [
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return SfDataGridTheme(
+      data: SfDataGridThemeData(
+        selectionColor: const Color.fromARGB(255, 235, 235, 235),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 50,
-                  width: 250,
-                  child: SearchTextField(
-                    searchController: searchController,
-                    onUpdateSearch: _updateSearch,
-                    textFormFieldOuterLabel: "Buscar",
-                    textFormFieldObligatory: false,
-                    hintText: "Buscar",
-                    orders: _originalOrders,
-                  ),
-                ),
-                Expanded(child: sizedBoxW()),
-              ],
-            ),
-            SizedBox(
-              height: widget.widgetHeight
-                  .clamp(0, (widget.widgetHeight).abs() + 1),
-              child: SfDataGrid(
-                controller: dataGridController,
-                onSelectionChanged: (addedRows, removedRows) => {
-                  dataGridController.selectedRows = addedRows,
-                },
-                allowPullToRefresh: true,
-                onQueryRowHeight: (details) {
-                  return details.getIntrinsicRowHeight(details.rowIndex);
-                },
-                isScrollbarAlwaysShown: true,
-                frozenColumnsCount: 0,
-                columnWidthMode: ColumnWidthMode.auto, // Cambia esta línea
-                columnWidthCalculationRange:
-                    ColumnWidthCalculationRange.allRows,
-                headerGridLinesVisibility: GridLinesVisibility.none,
-                gridLinesVisibility: GridLinesVisibility.none,
-                allowSorting: true,
-                allowMultiColumnSorting: true,
-                selectionMode: SelectionMode.single,
-                columns: dataColumnsName,
-                source: rDataSource,
-                footerFrozenRowsCount: 1,
-                footer: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(
                   children: [
-                    Text(
-                      _orders.length == _originalOrders.length
-                          ? '${_orders.length} registros'
-                          : '${_orders.length} de ${_originalOrders.length} registros',
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 140, 140, 140),
+                    SizedBox(
+                      height: 50,
+                      width: 250,
+                      child: SearchTextField(
+                        searchController: searchController,
+                        onUpdateSearch: _updateSearch,
+                        textFormFieldOuterLabel: "Buscar",
+                        textFormFieldObligatory: false,
+                        hintText: "Buscar",
+                        orders: _originalOrders,
                       ),
                     ),
+                    Expanded(child: sizedBoxW()),
+                    Button1(
+                      buttonLabel: "Editar",
+                      disableButtonIcon: true,
+                      onPressed: () => updateSelectedRowsArchivos(),
+                    ),
+                    sizedBoxW(width: 10),
+                    Button1(
+                      buttonLabel: "Eliminar",
+                      disableButtonIcon: true,
+                      onPressed: () => deleteSelectedRowsArchivos(),
+                    )
                   ],
                 ),
-              ),
+                SizedBox(
+                  height: widget.widgetHeight
+                      .clamp(0, (widget.widgetHeight).abs() + 1),
+                  child: SfDataGrid(
+                    controller: dataGridController,
+                    onSelectionChanged: (addedRows, removedRows) => {
+                      dataGridController.selectedRows = addedRows,
+                    },
+                    allowPullToRefresh: true,
+                    onQueryRowHeight: (details) {
+                      return details.getIntrinsicRowHeight(details.rowIndex);
+                    },
+                    isScrollbarAlwaysShown: true,
+                    frozenColumnsCount: 0,
+                    columnWidthMode: ColumnWidthMode.auto, // Cambia esta línea
+                    columnWidthCalculationRange:
+                        ColumnWidthCalculationRange.allRows,
+                    headerGridLinesVisibility: GridLinesVisibility.none,
+                    gridLinesVisibility: GridLinesVisibility.none,
+                    allowSorting: true,
+                    allowMultiColumnSorting: true,
+                    selectionMode: SelectionMode.single,
+                    columns: dataColumnsName,
+                    source: rDataSource,
+                    footerFrozenRowsCount: 1,
+                    footer: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _orders.length == _originalOrders.length
+                              ? '${_orders.length} registros'
+                              : '${_orders.length} de ${_originalOrders.length} registros',
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 140, 140, 140),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SfDataPager(
+                  controller: dataPagerController,
+                  delegate: rDataSource,
+                  pageCount: _numPages,
+                  direction: Axis.horizontal,
+                ),
+              ],
             ),
-            SfDataPager(
-              controller: dataPagerController,
-              delegate: rDataSource,
-              pageCount: _numPages,
-              direction: Axis.horizontal,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-    ],
-  ),
-);
-
+    );
   }
 }

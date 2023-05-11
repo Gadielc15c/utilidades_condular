@@ -228,12 +228,12 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
                             ];
 
                             if (widget.queryType == queryInsert) {
-                              generateHtmlAndSendEmail(valuesList);
                               var results = await insertData(
                                 table: "ACTIVIDADES",
                                 values: valuesList,
                               );
                               if (results[scc]) {
+                                generateHtmlAndSendEmail(valuesList);
                                 await insertData(
                                   table: "LOGS",
                                   values: [

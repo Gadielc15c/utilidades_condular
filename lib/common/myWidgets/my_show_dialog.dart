@@ -50,6 +50,7 @@ Future<bool> showDeleteConfirmationDialog({
   );
   return result;
 }
+
 Future<void> showUpdateArchivoDialog({
   required BuildContext context,
   required String idCode,
@@ -64,7 +65,6 @@ Future<void> showUpdateArchivoDialog({
   required String fechaInFText,
   required String observacionText,
   required String tiempoText,
-  required String estadoText,
 }) async {
   await showDialog<bool>(
     context: context,
@@ -89,7 +89,6 @@ Future<void> showUpdateArchivoDialog({
               fechaInFText: fechaInFText,
               observacionText: observacionText,
               tiempoText: tiempoText,
-              estadoText: estadoText,
               queryType: queryUpdate,
             ),
           ),

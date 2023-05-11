@@ -29,6 +29,7 @@ class ConsultaArchvBody extends State<ConsultaArchv> {
 
   Future<List<List<String>>> _populateTable() async {
     var results = await spData(sp: "get_archivos");
+
     List<List<String>> rowData = [];
     if (results[scc]) {
       Map<String, dynamic> myContent = results[cnt];
@@ -50,9 +51,9 @@ class ConsultaArchvBody extends State<ConsultaArchv> {
           "${temp['ARCHIVO_DIG']}",
           "${temp['FECHA_IN_D']}",
           "${temp['ARCHIVO_FISC']}",
-          "${temp['NUM_COP']}"
+          "${temp['NUM_COP']}",
           "${temp['FECHA_IN_F']}",
-          "${temp['OBSERVACIÓN']}",
+          "${temp['OBSERVACION']}",
           "${temp['TIEMPO']}",
           "${temp['ESTADO']}",
         ]);
@@ -88,9 +89,10 @@ class ConsultaArchvBody extends State<ConsultaArchv> {
       {keyName: "DELIVERY", keyColumnWidth: 160.0},
       {keyName: "DIGITAL", keyColumnWidth: 100.0},
       {keyName: "FECHA_IN_D", keyColumnWidth: 100.0},
-      {keyName: "FÍSICO", keyColumnWidth: 100.0},
+      {keyName: "FISICO", keyColumnWidth: 100.0},
+      {keyName: "NUM_COP", keyColumnWidth: 100.0},
       {keyName: "FECHA_IN_F", keyColumnWidth: 100.0},
-      {keyName: "OBSERVACIÓN", keyColumnWidth: double.nan},
+      {keyName: "OBSERVACION", keyColumnWidth: double.nan},
       {keyName: "TIEMPO", keyColumnWidth: 100.0},
       {keyName: "ESTADO", keyColumnWidth: 30.0},
     ];
@@ -107,8 +109,13 @@ class ConsultaArchvBody extends State<ConsultaArchv> {
       }
 
       for (int i = 0; i < list1.length; i++) {
-        if (!list1[i].every((element) => list2[i].contains(element))) {
+        if (list1[i].length != list2[i].length) {
           return false;
+        }
+        for (int ii = 0; ii < list1[i].length; ii++) {
+          if (list1[i][ii] != list2[i][ii]) {
+            return false;
+          }
         }
       }
 
@@ -177,6 +184,12 @@ class ConsultaArchvBody extends State<ConsultaArchv> {
           Column(
             children: [
               // ...
+              Center(
+                child: largeLabel1(text: "CONSULTA HISTORICO DE ACCIONES"),
+              ),
+              Divider(
+                color: textFieldBorderColor,
+              ),
               FutureBuilder<List<List<String>>>(
                 future: _rowDataFuture,
                 builder: (context, snapshot) {

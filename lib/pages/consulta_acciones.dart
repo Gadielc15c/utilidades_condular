@@ -5,6 +5,7 @@ import 'package:responsive_table/responsive_table.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:utilidades_condular/backend/api_bridge.dart';
+import 'package:utilidades_condular/common/myWidgets/build_data_grid_test.dart';
 import 'package:utilidades_condular/common/myWidgets/sized_boxes.dart';
 import 'package:utilidades_condular/common/myWidgets/labels.dart';
 import 'package:utilidades_condular/common/decoration/dec_outline_input_border.dart';
@@ -59,7 +60,6 @@ class ConsultaHistDeAccionesBody extends State<ConsultaHistDeAcciones> {
         ]);
       }
     } else {
-
       mySnackBar(
         context: context,
         success: false,

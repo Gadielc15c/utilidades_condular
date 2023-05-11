@@ -34,3 +34,13 @@ const String notProvided = "None Provided";
 
 const String defaultYes = "Si";
 const String defaultNo = "No";
+
+Map<String, String> defaultSelectionOptions = {
+  "1": defaultYes,
+  "0": defaultNo,
+};
+
+Map<String, String> defaultSelectionOptionsR = {
+  defaultYes: "1",
+  defaultNo: "0",
+};

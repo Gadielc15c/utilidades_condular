@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:utilidades_condular/pages/consulta_archivos.dart';
-import 'package:utilidades_condular/pages/consulta_historico_de_acciones.dart';
+import 'package:utilidades_condular/pages/consulta_acciones.dart';
 import 'package:utilidades_condular/pages/historico_de_archivos.dart';
 import 'package:utilidades_condular/pages/historico_de_acciones.dart';
-import 'package:utilidades_condular/pages/historico_de_archivos.dart';
 import 'package:utilidades_condular/defaul_config.dart';
 import 'package:utilidades_condular/common/myFunctions/auth.dart';
 
@@ -126,6 +125,7 @@ class _HomePage extends State<HomePage> {
                   Navigator.pop(context);
                 },
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.access_time_outlined),
                 title: const Text('Histórico de Acciones'),

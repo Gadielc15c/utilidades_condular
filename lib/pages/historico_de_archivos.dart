@@ -33,7 +33,6 @@ class HistoricoDeArchivos extends StatefulWidget {
   String? fechaInFText;
   String? observacionText;
   String? tiempoText;
-  String? estadoText;
   String queryType;
 
   HistoricoDeArchivos({
@@ -52,14 +51,12 @@ class HistoricoDeArchivos extends StatefulWidget {
     this.fechaInFText,
     this.observacionText,
     this.tiempoText,
-    this.estadoText,
     this.queryType = queryInsert,
   }) : super(key: key);
 
   @override
   HistoricoDeArchivosBody createState() => HistoricoDeArchivosBody();
 }
-
 
 class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
   double maxHeight = 165;
@@ -93,15 +90,62 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
 
   bool loadingScreen = false;
 
-  Map<String, String> defaultSelectionOptions = {
-    "1": defaultYes,
-    "0": defaultNo,
-  };
-
   @override
   Widget build(BuildContext context) {
     controllerFechaDigital.clear();
     controllerFechaFisico.clear();
+
+    if (widget.areaRefText != null &&
+        widget.codDeptoText != null &&
+        widget.tituloText != null &&
+        widget.personaEntText != null &&
+        widget.numCopText != null &&
+        widget.archivoDigText != null &&
+        widget.fechaInDText != null &&
+        widget.archivoFiscText != null &&
+        widget.fechaInFText != null &&
+        widget.observacionText != null &&
+        widget.tiempoText != null) {
+      controllerArea.text = widget.areaRefText ?? '';
+      controllerCodDepto.text = widget.codDeptoText ?? '';
+      controllerTitulo.text = widget.tituloText ?? '';
+      controllerEntrega.text = widget.personaEntText ?? '';
+      controllerNumCopias.text = widget.numCopText ?? '';
+      controllerArchDigital.text = widget.archivoDigText ?? '';
+      controllerFechaDigital.text = widget.fechaInDText ?? '';
+      controllerArchFisico.text = widget.archivoFiscText ?? '';
+      controllerFechaFisico.text = widget.fechaInFText ?? '';
+      controllerObservacion.text = widget.observacionText ?? '';
+      controllerTiempo.text = widget.tiempoText ?? '';
+    }
+
+    String oAreaRef = widget.areaRefText ?? '';
+    String oCodDept = widget.codDeptoText ?? '';
+    String oTitulo = widget.tituloText ?? '';
+    String oPersonaEnt = widget.personaEntText ?? '';
+    String oNumCop = widget.numCopText ?? '';
+    String oArchDig = widget.archivoDigText ?? '';
+    String oFechaDig = widget.fechaInDText ?? '';
+    String oArchFis = widget.archivoFiscText ?? '';
+    String oFechaFis = widget.fechaInFText ?? '';
+    String oObserv = widget.observacionText ?? '';
+    String oTiempo = widget.tiempoText ?? '';
+
+    String oDataEdit = stringForLogs([
+      "COD: ${widget.idCode ?? ''}",
+      "AREA_REF: $oAreaRef",
+      "COD_DEPTO: $oCodDept",
+      "TITULO: $oTitulo",
+      "PERSONA_ENT: $oPersonaEnt",
+      "NUM_COP: $oNumCop",
+      "ARCHIVO_DIG: $oArchDig",
+      "FECHA_IN_D: $oFechaDig",
+      "ARCHIVO_FISC: $oArchFis",
+      "FECHA_IN_F: $oFechaFis",
+      "OBSERVACION: $oObserv",
+      "TIEMPO: $oTiempo",
+    ]);
+
     return sizedBoxPadding(
       contextHeight: widget.contextHeight,
       child: Stack(
@@ -144,7 +188,9 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
               Row(
                 children: [
                   FormDropDown1(
-                    initialValue: defaultSelectionOptions.values.toList()[0],
+                    initialValue: widget.archivoDigText == "0"
+                        ? defaultSelectionOptions.values.toList()[1]
+                        : defaultSelectionOptions.values.toList()[0],
                     items: defaultSelectionOptions,
                     textFormFieldOuterLabel: "Archivo Digital",
                     textFormFieldObligatory: true,
@@ -152,7 +198,9 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
                   ),
                   sizedBoxW(),
                   FormDropDown1(
-                    initialValue: defaultSelectionOptions.values.toList()[0],
+                    initialValue: widget.archivoFiscText == "0"
+                        ? defaultSelectionOptions.values.toList()[1]
+                        : defaultSelectionOptions.values.toList()[0],
                     items: defaultSelectionOptions,
                     textFormFieldOuterLabel: "Archivo Físico",
                     textFormFieldObligatory: true,
@@ -259,44 +307,103 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
                         }
 
                         valuesList.add("1"); //estado
-                        var results = await insertData(
-                          table: "ARCHIVOS",
-                          values: valuesList,
-                        );
-
-                        mySnackBar(
-                          context: context,
-                          success: results[scc],
-                          successfulText: "Se introdujeron los datos",
-                          unsuccessfulText: results[err],
-                        );
-
-                        if (results[scc]) {          
-                          await insertData(
-                            table: "LOGS",
-                            values: [
-                              await getUser(context) ?? "",
-                              typeInsert,
-                              "ARCHIVOS",
-                              "",
-                              stringForLogs([
-                                "ID: $notProvided",
-                                "AREA_REF: ${valuesList[0]}",
-                                "COD_DEPTO: ${valuesList[1]}",
-                                "TÍTULO: ${valuesList[2]}",
-                                "PERSONA_ENT: ${valuesList[3]}",
-                                "NUM_COP: ${valuesList[4]}",
-                                "ARCHIVO_DIG: ${valuesList[5]}",
-                                "FECHA_IN_D: ${valuesList[6]}",
-                                "ARCHIVO_FISC: ${valuesList[7]}",
-                                "FECHA_IN_F: ${valuesList[8]}",
-                                "OBSERVACIÓN: ${valuesList[9]}",
-                                "TIEMPO: ${valuesList[10]}",
-                                "ESTADO: ${1}",
-                              ]),
-                              getDateTime(),
-                            ],
+                        if (widget.queryType == queryInsert) {
+                          var results = await insertData(
+                            table: "ARCHIVOS",
+                            values: valuesList,
                           );
+
+                          mySnackBar(
+                            context: context,
+                            success: results[scc],
+                            successfulText: "Se introdujeron los datos",
+                            unsuccessfulText: results[err],
+                          );
+
+                          if (results[scc]) {
+                            await insertData(
+                              table: "LOGS",
+                              values: [
+                                await getUser(context) ?? "",
+                                typeInsert,
+                                "ARCHIVOS",
+                                "",
+                                stringForLogs([
+                                  "COD: $notProvided",
+                                  "AREA_REF: ${valuesList[0]}",
+                                  "COD_DEPTO: ${valuesList[1]}",
+                                  "TITULO: ${valuesList[2]}",
+                                  "PERSONA_ENT: ${valuesList[3]}",
+                                  "NUM_COP: ${valuesList[4]}",
+                                  "ARCHIVO_DIG: ${valuesList[5]}",
+                                  "FECHA_IN_D: ${valuesList[6]}",
+                                  "ARCHIVO_FISC: ${valuesList[7]}",
+                                  "FECHA_IN_F: ${valuesList[8]}",
+                                  "OBSERVACION: ${valuesList[9]}",
+                                  "TIEMPO: ${valuesList[10]}",
+                                  "ESTADO: ${1}",
+                                ]),
+                                getDateTime(),
+                              ],
+                            );
+                          }
+                          mySnackBar(
+                            context: context,
+                            success: results[scc],
+                            successfulText: "Se actualizaron los datos",
+                            unsuccessfulText: results[err],
+                          );
+                        } else {
+                          if (widget.idCode != null) {
+                            var results = await updateData(
+                              table: "ARCHIVOS",
+                              columns: [],
+                              values: valuesList,
+                              whr: "COD",
+                              whrval: widget.idCode!,
+                            );
+                            if (results[scc]) {
+                              await insertData(
+                                table: "LOGS",
+                                values: [
+                                  await getUser(context) ?? "",
+                                  typeInsert,
+                                  "ARCHIVOS",
+                                  oDataEdit,
+                                  stringForLogs([
+                                    "COD: ${widget.idCode ?? notProvided}",
+                                    "AREA_REF: ${valuesList[0]}",
+                                    "COD_DEPTO: ${valuesList[1]}",
+                                    "TITULO: ${valuesList[2]}",
+                                    "PERSONA_ENT: ${valuesList[3]}",
+                                    "NUM_COP: ${valuesList[4]}",
+                                    "ARCHIVO_DIG: ${valuesList[5]}",
+                                    "FECHA_IN_D: ${valuesList[6]}",
+                                    "ARCHIVO_FISC: ${valuesList[7]}",
+                                    "FECHA_IN_F: ${valuesList[8]}",
+                                    "OBSERVACION: ${valuesList[9]}",
+                                    "TIEMPO: ${valuesList[10]}",
+                                    "ESTADO: ${1}",
+                                  ]),
+                                  getDateTime(),
+                                ],
+                              );
+                            }
+                            mySnackBar(
+                              context: context,
+                              success: results[scc],
+                              successfulText: "Se actualizaron los datos",
+                              unsuccessfulText: results[err],
+                            );
+                          } else {
+                            mySnackBar(
+                              context: context,
+                              success: false,
+                              successfulText: "",
+                              unsuccessfulText: "Error 100035",
+                            );
+                          }
+                          Navigator.of(context).pop();
                         }
                       } else {
                         if (mounted) {
@@ -332,6 +439,15 @@ class HistoricoDeArchivosBody extends State<HistoricoDeArchivos> {
                       }
                     },
                   ),
+                  if (widget.queryType == queryUpdate) sizedBoxW(width: 10),
+                  if (widget.queryType == queryUpdate)
+                    Button1(
+                      buttonLabel: "Cancelar",
+                      buttonIcon: const Icon(Icons.cancel_outlined),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
                 ],
               ),
             ],
