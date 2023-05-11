@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:utilidades_condular/backend/api_bridge.dart';
@@ -359,7 +359,7 @@ class HistoricoDeAccionesBody extends State<HistoricoDeAcciones> {
   }
 }
 
-// Layouts Classes 
+// Layouts Classes
 class RowView extends StatelessWidget {
   const RowView({
     super.key,
@@ -431,7 +431,7 @@ class RowView extends StatelessWidget {
               displayMandatoryField: boolMFFecha,
             ),
           ),
-     sizedBoxH(height: 3),
+          sizedBoxH(height: 3),
           ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 60),
             child: TextField1(
@@ -522,8 +522,8 @@ class ColumnLayout extends StatelessWidget {
               textFormFieldOuterLabel: "Fecha",
               textFormFieldObligatory: true,
               displayMandatoryField: boolMFFecha,
-            ),            sizedBoxW(width: 5),
-
+            ),
+            sizedBoxW(width: 5),
             TextField1(
               controller: controllerObservacion,
               textFormFieldOuterLabel: "Observación",
